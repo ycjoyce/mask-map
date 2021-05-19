@@ -3,32 +3,53 @@ html {
     color: map-get($theme-color, basic);
 }
 
+body {
+    line-height: 1.3rem;
+}
+
 .title {
     &-pmr {
         font-size: 2rem;
+        line-height: 2.3rem;
     }
 
     &-sdr {
         font-size: 1.3rem;
+        line-height: 1.6rem;
     }
 
     &-ttr {
         font-size: 1.1rem;
+        line-height: 1.4rem;
     }
 }
 
 .text {
     &-sm {
-        font-size: .8rem;
+        font-size: .8rem !important;
+        line-height: 1rem;
     }
 
     &-bold {
         font-weight: bolder;
     }
 
+    &-underline {
+        text-decoration: underline;
+    }
+
     &-color {
         @each $key, $val in $theme-color {
             &-#{$key} {
+                color: $val;
+            }
+        }
+    }
+
+    &-bg {
+        @each $key, $val in $theme-color {
+            &-#{$key} {
+                background-color: rgba($val, .1);
                 color: $val;
             }
         }

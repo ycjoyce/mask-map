@@ -1,16 +1,20 @@
 <template>
-  <div class="available-box">
+  <div class="available-box text-color-pmr">
     <span
-			class="available-target text-bold"
+			class="available-target text-bold title-pmr"
 		>
 			奇數
 		</span>
 
-		<span>購買日</span>
+		<span class="available-text">
+			購買日
+		</span>
 
-		<button
-			class="btn btn-solid-assist btn-circle available-ques"
-		></button>
+		<input
+			type="image"
+			class="btn available-ques"
+			:src="require('@/assets/img/ic_help.png')"
+		>
   </div>
 </template>
 

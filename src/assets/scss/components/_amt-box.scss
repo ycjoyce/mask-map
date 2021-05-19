@@ -1,0 +1,29 @@
+.amt-box {
+    padding: 10px;
+    color: #fff;
+
+    @each $key, $val in $theme-color {
+        &-#{$key} {
+            background-color: $val;
+            background-repeat: no-repeat;
+            background-size: 50px;
+            background-position: calc(100% + 10px) calc(100% - 10px);
+
+            @if ($key == available) {
+                background-image: url('~@/assets/img/ic_stock_full.png');
+            }
+
+            @if ($key == unavailable) {
+                background-image: url('~@/assets/img/ic_stock_none.png');
+            }
+
+            @if ($key == danger) {
+                background-image: url('~@/assets/img/ic_stock_few.png');
+            }
+        }
+    }
+}
+
+.amt-box-title {
+    margin-bottom: 15px;
+}

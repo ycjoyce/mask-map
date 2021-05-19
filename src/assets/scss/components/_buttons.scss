@@ -3,25 +3,11 @@
     border: none;
     background-color: transparent;
     font-size: 1rem;
-    padding: 10px;
+    padding: 5px 10px;
     transition: all .3s;
 
     &:hover {
         filter: brightness(1.1);
-    }
-
-    &-round {
-        &-sm {
-            border-radius: 10px;
-        }
-
-        &-lg {
-            border-radius: 20px;
-        }
-    }
-
-    &-circle {
-        border-radius: 100%;
     }
 
     &-solid {
@@ -38,6 +24,10 @@
             &-#{$key} {
                 border: 2px solid $val;
                 color: $val;
+
+                &:hover {
+                    background-color: rgba($val, .1);
+                }
             }
         }
     }

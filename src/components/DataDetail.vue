@@ -1,6 +1,6 @@
 <template>
   <div class="data-detail">
-    <ul class="list text-sm">
+    <ul class="data-detail-list list text-sm">
 			<li class="list-item">
 				距離附近 5公里 以內的供應商
 			</li>
@@ -10,7 +10,7 @@
 			</li>
 		</ul>
 
-		<button class="btn btn-border-pmr btn-circle">
+		<button class="btn btn-border-pmr corner-round-lg">
 			重整列表
 		</button>
   </div>

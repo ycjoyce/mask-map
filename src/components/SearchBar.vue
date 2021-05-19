@@ -17,7 +17,7 @@
 		</div>
     
 		<button
-			class="btn btn-solid-pmr btn-round-sm box-sdw text-ttr search-submit"
+			class="btn btn-solid-pmr corner-round-sm box-sdw text-ttr search-submit"
 		>
 			搜尋
 		</button>

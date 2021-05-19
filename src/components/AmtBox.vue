@@ -3,7 +3,7 @@
     :class="[
 			'amt-box',
 			'amt-box-available',
-			'corner-round',
+			'corner-round-sm',
 			`amt-box-${maskStatus}`
 		]"
 	>
@@ -11,8 +11,8 @@
 			{{typeMap[type]}}口罩數量
 		</p>
 
-		<p class="amt-box-amt">
-			<span class="amt-box-num text-bold">
+		<p class="amt-box-amt text-sm">
+			<span class="amt-box-num text-bold title-pmr">
 				{{maskAmt}}
 			</span>
 			片

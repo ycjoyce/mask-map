@@ -1,0 +1,16 @@
+.amt-box-container {
+    display: flex;
+    margin-bottom: 20px;
+
+    .amt-box {
+        flex: 1;
+
+        &:not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+}
+
+.pharmacy-card {
+    padding: 10px 15px;
+}

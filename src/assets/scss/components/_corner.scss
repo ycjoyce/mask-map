@@ -1,0 +1,15 @@
+.corner {
+    &-round {
+        &-sm {
+            border-radius: 10px;
+        }
+
+        &-lg {
+            border-radius: 20px;
+        }
+    }
+
+    &-circle {
+        border-radius: 100%;
+    }
+}

@@ -1,0 +1,39 @@
+.pharmacy-title {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 15px;
+
+    >*:not(:last-child) {
+        margin-right: 10px;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 110%;
+        border-radius: 0 3px 3px 0;
+        left: -15px;
+    }
+
+    @each $key, $val in $theme-color {
+        &.#{$key} {
+            &::before {
+                background-color: $val;
+            }
+        }
+    }
+}
+
+.pharmacy-distance {
+    align-self: flex-end;
+}
+
+.pharmacy-status {
+    padding: 3px 5px;
+}
+
+.pharmacy-detail-list-item {
+    margin-bottom: 10px;
+}

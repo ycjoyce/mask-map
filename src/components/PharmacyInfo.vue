@@ -1,20 +1,22 @@
 <template>
   <div class="pharmacy-info">
-    <h2 class="pharmacy-name">
-      {{pharmacyInfo.name}}
+    <div class="pharmacy-title available">
+			<h2 class="pharmacy-name text-color-pmr text-bold title-ttr">
+				{{pharmacyInfo.name}}
+			</h2>
 			
-			<span class="pharmacy-distance">
+			<span class="pharmacy-distance text-color-pmr text-bold text-sm">
 				1.2 km
 			</span>
 
-			<span class="pharmacy-status">
+			<span class="pharmacy-status text-sm text-bg-available corner-round-sm">
 				休息中
 			</span>
-    </h2>
+    </div>
 
-		<ul class="pharmacy-detail list">
+		<ul class="pharmacy-detail-list list">
 			<li
-				class="list-item"
+				class="pharmacy-detail-list-item list-item"
 				v-for="(detailVal, detailKey) in pharmacyDetail"
 				:key="detailKey"
 			>
@@ -27,14 +29,14 @@
 				</span>
 
 				<button
-					class="btn btn-pure btn-underline text-sm list-item-btn"
+					class="btn text-sm text-underline text-color-basic list-item-btn"
 					v-if="detailKey === 'address'"
 				>
 					於地圖查看
 				</button>
 
 				<button
-					class="btn btn-pure btn-underline text-sm list-item-btn"
+					class="btn text-sm text-underline text-color-basic list-item-btn"
 					v-else-if="detailKey === 'phone'"
 				>
 					撥打電話

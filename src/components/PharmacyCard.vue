@@ -1,5 +1,5 @@
 <template>
-  <div class="pharmacy-card corner-round box-sdw">
+  <div class="pharmacy-card corner-round-sm box-sdw">
 		<div class="amt-box-container">
 			<amt-box
 				v-for="ageType in ageTypes"
