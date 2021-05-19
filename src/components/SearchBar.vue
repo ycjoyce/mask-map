@@ -1,19 +1,23 @@
 <template>
   <div class="search-bar">
-    <input
-      type="text"
-			placeholder="請輸入地址或區域"
-			class="search-input input-border"
-		>
+		<div class="search-input-box">
+			<input
+				type="text"
+				placeholder="請輸入地址或區域"
+				class="search-input input-border input-round-sm"
+			>
 
-		<result-list/>
+			<result-list v-show="false"/>
 
+			<input
+				type="image"
+				class="btn search-cancel"
+				:src="require('@/assets/img/ic_delete.png')"
+			>
+		</div>
+    
 		<button
-			class="btn btn-solid-pmr btn-circle search-cancel"
-		></button>
-
-		<button
-			class="btn btn-solid-pmr btn-round search-submit"
+			class="btn btn-solid-pmr btn-round-sm box-sdw text-ttr search-submit"
 		>
 			搜尋
 		</button>

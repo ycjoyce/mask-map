@@ -1,0 +1,11 @@
+.input {
+    &-border {
+        border: 1px solid map-get($theme-color, unavailable);
+    }
+
+    &-round {
+        &-sm {
+            border-radius: 5px;
+        }
+    }
+}

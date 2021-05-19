@@ -1,0 +1,36 @@
+html {
+    font-size: 16px;
+    color: map-get($theme-color, basic);
+}
+
+.title {
+    &-pmr {
+        font-size: 2rem;
+    }
+
+    &-sdr {
+        font-size: 1.3rem;
+    }
+
+    &-ttr {
+        font-size: 1.1rem;
+    }
+}
+
+.text {
+    &-sm {
+        font-size: .8rem;
+    }
+
+    &-bold {
+        font-weight: bolder;
+    }
+
+    &-color {
+        @each $key, $val in $theme-color {
+            &-#{$key} {
+                color: $val;
+            }
+        }
+    }
+}

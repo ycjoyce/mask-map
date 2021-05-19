@@ -1,0 +1,17 @@
+@mixin rwd($device) {
+	@if ($device == mobile) {
+		@media all and (max-width: 768px) {
+			@content;
+		}
+	}
+	@else if ($device == pad) {
+		@media all and (min-width: 769px) and (max-width: 1199px) {
+			@content;
+		}
+	}
+	@else if ($device == pc) {
+		@media all and (min-width: 1200px) {
+			@content;
+		}
+	}
+}

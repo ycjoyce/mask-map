@@ -1,0 +1,44 @@
+.btn {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    padding: 10px;
+    transition: all .3s;
+
+    &:hover {
+        filter: brightness(1.1);
+    }
+
+    &-round {
+        &-sm {
+            border-radius: 10px;
+        }
+
+        &-lg {
+            border-radius: 20px;
+        }
+    }
+
+    &-circle {
+        border-radius: 100%;
+    }
+
+    &-solid {
+        @each $key, $val in $theme-color {
+            &-#{$key} {
+                background-color: $val;
+                color: #fff;
+            }
+        }
+    }
+
+    &-border {
+        @each $key, $val in $theme-color {
+            &-#{$key} {
+                border: 2px solid $val;
+                color: $val;
+            }
+        }
+    }
+}

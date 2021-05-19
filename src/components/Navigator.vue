@@ -4,7 +4,7 @@
 			<li
 				v-for="(target, targetIdx) in navTargets"
 				:key="`target-${targetIdx}`"
-				class="nav-target"
+				class="nav-target title-ttr text-color-pmr active"
 			>
 				{{target}}
 			</li>

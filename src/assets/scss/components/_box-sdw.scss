@@ -1,0 +1,8 @@
+.box-sdw {
+    box-shadow: 2px 3px 8px rgba(#000000, .3);
+    transition: all .3s;
+
+    &:hover {
+        box-shadow: 3px 4px 9px rgba(#000000, .4);
+    }
+}

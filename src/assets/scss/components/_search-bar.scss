@@ -1,0 +1,22 @@
+.search-bar {
+    display: flex;
+}
+
+.search-input-box {
+    position: relative;
+    margin-right: 10px;
+}
+
+.search-input {
+    padding: 10px 50px 10px 10px;
+    height: 100%;
+    font-size: 1rem;
+}
+
+.search-cancel {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    height: 100%;
+}
