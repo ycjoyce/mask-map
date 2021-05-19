@@ -6,7 +6,11 @@
 
     <data-detail/>
 
-    <pharmacy-card/>
+    <pharmacy-card
+      v-for="pharmacy in pharmacyToShow"
+      :key="pharmacy.properties.id"
+      :pharmacy-data="pharmacy"
+    />
 
     <button class="btn btn-solid-pmr btn-circle">
       查看更多
@@ -26,6 +30,26 @@ export default {
     AvailableCal,
     DataDetail,
     PharmacyCard,
-	},
+  },
+  props: {
+    allPharmacyData: {
+      type: Array,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      pharmacyStartIdx: 0,
+      pharmcyShowedAmt: 20,
+    };
+  },
+  computed: {
+    pharmacyToShow() {
+      if (!this.allPharmacyData) {
+        return [];
+      }
+      return this.allPharmacyData.slice(this.pharmacyStartIdx, this.pharmacyStartIdx + this.pharmcyShowedAmt);
+    },
+  },
 }
 </script>

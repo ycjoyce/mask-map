@@ -4,18 +4,16 @@
 			'amt-box',
 			'amt-box-available',
 			'corner-round',
-			// amt-box-available
-			// amt-box-danger
-			// amt-box-unavailable
+			`amt-box-${maskStatus}`
 		]"
 	>
 		<p class="amt-box-title">
-			成人口罩數量
+			{{typeMap[type]}}口罩數量
 		</p>
 
 		<p class="amt-box-amt">
 			<span class="amt-box-num text-bold">
-				200
+				{{maskAmt}}
 			</span>
 			片
 		</p>
@@ -24,6 +22,35 @@
 
 <script>
 export default {
-
+	props: {
+		type: {
+			type: String,
+			required: true,
+		},
+		maskAmt: {
+			type: Number,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			typeMap: {
+				'adult': '成人',
+				'child': '兒童',
+			},
+			safeMaskAmt: 100,
+		};
+	},
+	computed: {
+		maskStatus() {
+			if (this.maskAmt >= this.safeMaskAmt) {
+				return 'available';
+			}
+			if (this.maskAmt < 1) {
+				return 'unavailable';
+			}
+			return 'danger;'
+		},
+	},
 }
 </script>

@@ -1,10 +1,17 @@
 <template>
   <div class="pharmacy-card corner-round box-sdw">
 		<div class="amt-box-container">
-			<amt-box/>
+			<amt-box
+				v-for="ageType in ageTypes"
+				:key="ageType"
+				:type="ageType"
+				:maskAmt="pharmacyData.properties[`mask_${ageType}`]"
+			/>
 		</div>
     
-		<pharmacy-info/>
+		<pharmacy-info
+			:pharmacyData="pharmacyData"
+		/>
   </div>
 </template>
 
@@ -16,6 +23,17 @@ export default {
 	components: {
 		AmtBox,
 		PharmacyInfo,
+	},
+	props: {
+		pharmacyData: {
+			type: Object,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			ageTypes: ['adult', 'child'],
+		};
 	},
 }
 </script>
