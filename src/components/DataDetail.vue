@@ -6,11 +6,14 @@
 			</li>
 
 			<li class="list-item">
-				資料更新時間 20:22:22
+				資料更新時間 {{formattedTime($store.state.refreshListTime.time)}}
 			</li>
 		</ul>
 
-		<button class="btn btn-border-pmr corner-round-lg">
+		<button
+			class="btn btn-border-pmr corner-round-lg"
+			@click="refreshList"
+		>
 			重整列表
 		</button>
   </div>
@@ -18,6 +21,20 @@
 
 <script>
 export default {
-
+	methods: {
+		refreshList() {
+			this.$store.commit('refreshList', {
+				click: true,
+				time: Date.now(),
+			});
+		},
+	},
+	computed: {
+		formattedTime() {
+			return (time) => {
+				return new Date(time).toLocaleTimeString();
+			}
+		},
+	},
 }
 </script>

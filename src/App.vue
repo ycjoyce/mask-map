@@ -43,13 +43,34 @@ export default {
 			const headerEl = this.$refs['my-header']['$el'];
 			return headerEl.offsetHeight;
 		},
+		fetchDataFromApi() {
+			fetchData(
+				process.env.VUE_APP_API_ADDRESS
+			).then((res) => {
+				this.allPharmacyData = res.features;
+
+				if (this.$store.state.refreshListTime) {
+					return;
+				}
+				
+				this.$store.commit('refreshList', { 
+					click: false,
+					time: Date.now()
+				});
+			});
+		},
+	},
+	watch: {
+		'$store.state.refreshListTime': function({ click, time }) {
+			if (!click || !time) {
+				return;
+			}
+
+			this.fetchDataFromApi();
+		},
 	},
 	created() {
-		fetchData(
-			process.env.VUE_APP_API_ADDRESS
-		).then((res) => {
-			this.allPharmacyData = res.features;
-		});
+		this.fetchDataFromApi();
 	},
 	mounted() {
 		this.headerHeight = this.getHeaderHeight();
