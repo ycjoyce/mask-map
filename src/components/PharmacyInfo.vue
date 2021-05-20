@@ -6,7 +6,7 @@
 			</h2>
 			
 			<span class="pharmacy-distance text-color-pmr text-bold text-sm">
-				1.2 km
+				{{calDistance}} km
 			</span>
 
 			<span class="pharmacy-status text-sm text-bg-available corner-round-sm">
@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { getDistance } from '@/assets/js/util';
+
 export default {
 	props: {
 		pharmacyData: {
@@ -57,13 +59,29 @@ export default {
 	data() {
 		return {
 			pharmacyInfo: this.pharmacyData.properties || {},
-			pharmacyGeo: this.pharmacyData.gemetry || {},
+			pharmacyGeo: this.pharmacyData.geometry || {},
 			pharmacyDetail: {
 				'address': '地址',
 				'phone': '電話',
 				'note': '備註',
 			},
 		};
+	},
+	computed: {
+		calDistance() {
+			if (!this.$store.state.userCurPos || !this.pharmacyGeo.coordinates) {
+				return 0;
+			}
+
+			let originalCoords = this.pharmacyGeo.coordinates;
+			let coords = originalCoords;
+
+			if (originalCoords[0] > 100) {
+				[coords[0], coords[1]] = [coords[1], coords[0]];
+			}
+			
+			return getDistance(this.$store.state.userCurPos, coords).toFixed(2);
+		},
 	},
 }
 </script>

@@ -7,6 +7,7 @@
 
 <script>
 import L from 'leaflet';
+import { getDistance } from '@/assets/js/util';
 
 export default {
   props: {
@@ -17,7 +18,7 @@ export default {
 	},
   data() {
     return {
-      center: [25.0457377,121.5129428],
+      center: this.$store.state.mapCenter,
       zoom: 15,
       map: null,
       points: [],
@@ -33,10 +34,12 @@ export default {
       navigator.geolocation.getCurrentPosition(this.successGPS, this.errorGPS);
     },
     successGPS(position) {
-      this.center = [
+      let curPos = [
         position.coords.latitude,
         position.coords.longitude,
       ];
+      this.center = curPos;
+      this.$store.commit('setUserCurPos', curPos);
 
       this.initMap();
     },
@@ -78,11 +81,13 @@ export default {
       ));
 
       this.points.forEach((point) => {
-        [point.coords[0], point.coords[1]] = [point.coords[1], point.coords[0]];
+        if (point.coords[0] > 100) {
+          [point.coords[0], point.coords[1]] = [point.coords[1], point.coords[0]];
+        }
       });
 
       this.points = this.points.filter((point) => (
-        this.getDistance(point.coords, this.center) <= this.distanceArange
+        getDistance(point.coords, this.center) <= this.distanceArange
       ));
     },
     drawMarkers() {
@@ -98,17 +103,6 @@ export default {
         }).addTo(this.map);
       });
     },
-    getDistance([lat1, lng1], [lat2, lng2]) {
-      const radLat1 = lat1 * Math.PI / 180;
-      const radLat2 = lat2 * Math.PI / 180;
-      const a = radLat1 - radLat2;
-      const  b = lng1 * Math.PI / 180 - lng2 * Math.PI / 180;
-      let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
-              Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
-      s = s * 6378.137;
-      s = Math.round(s * 10000) / 10000;
-      return s;
-    },
     async handleMapMove() {
       const {lat, lng} = this.map.getCenter();
       this.center = [lat, lng];
@@ -123,6 +117,9 @@ export default {
       if (!oldVal && val) {
         this.getUserPos();
       }
+    },
+    center(val) {
+      this.$store.commit('setMapCenter', val);
     },
   },
   mounted() {
