@@ -1,0 +1,24 @@
+.footer-contact {
+    color: map-get($theme-color, pmr);
+    
+    .list-item {
+        padding: 0 10px;
+
+        &:first-child {
+            padding-left: 0;
+        }
+
+        &:last-child {
+            padding-right: 0;
+        }
+    }
+}
+
+.footer {
+    text-align: right;
+    padding: 20px 30px;
+    
+    >*:not(:last-child) {
+        margin-bottom: 10px;
+    }
+}

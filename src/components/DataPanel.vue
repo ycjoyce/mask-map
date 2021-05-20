@@ -1,5 +1,5 @@
 <template>
-  <aside>
+  <aside class="data-panel">
     <search-bar/>
 
     <available-cal/>
@@ -12,7 +12,7 @@
       :pharmacy-data="pharmacy"
     />
 
-    <button class="btn btn-solid-pmr btn-circle">
+    <button class="btn btn-solid-pmr corner-round-lg title-ttr box-sdw load-more-data">
       查看更多
     </button>
   </aside>

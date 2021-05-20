@@ -2,7 +2,7 @@
   <div>
 		<my-header/>
 
-		<div>
+		<div class="main-container">
 			<data-panel
 				:all-pharmacy-data="allPharmacyData"
 			/>

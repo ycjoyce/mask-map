@@ -1,0 +1,16 @@
+.data-panel {
+    background-color: map-get($theme-color, bgc);
+    padding: 20px 30px;
+
+    >*:not(:last-child) {
+        margin-bottom: 20px;
+    }
+}
+
+.load-more-data {
+    display: block;
+    width: 40%;
+    margin: 0 auto;
+    padding: 10px;
+}
+

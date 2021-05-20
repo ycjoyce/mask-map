@@ -1,6 +1,6 @@
 .list-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .list-item-title {
@@ -14,4 +14,23 @@
 
 .list-item-btn {
     flex: 0 0 auto;
+    padding-right: 0;
+}
+
+.list-horizontal {
+    display: inline-flex;
+}
+
+.list-seperate {
+    .list-item:not(:last-child) {
+        position: relative;
+
+        &::after {
+            content: '|';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
 }

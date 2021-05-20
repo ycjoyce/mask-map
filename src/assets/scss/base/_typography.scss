@@ -9,17 +9,17 @@ body {
 
 .title {
     &-pmr {
-        font-size: 2rem;
+        font-size: 2rem !important;
         line-height: 2.3rem;
     }
 
     &-sdr {
-        font-size: 1.3rem;
+        font-size: 1.3rem !important;
         line-height: 1.6rem;
     }
 
     &-ttr {
-        font-size: 1.1rem;
+        font-size: 1.1rem !important;
         line-height: 1.4rem;
     }
 }
