@@ -5,7 +5,10 @@
 				v-for="ageType in ageTypes"
 				:key="ageType"
 				:type="ageType"
-				:maskAmt="pharmacyData.properties[`mask_${ageType}`]"
+				:maskAmt="{
+					adult: pharmacyData.properties['mask_adult'],
+					child: pharmacyData.properties['mask_child']
+				}"
 			/>
 		</div>
     

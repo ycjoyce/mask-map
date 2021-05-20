@@ -13,7 +13,7 @@
 
 		<p class="amt-box-amt text-sm">
 			<span class="amt-box-num text-bold title-pmr">
-				{{maskAmt}}
+				{{maskAmt[type]}}
 			</span>
 			片
 		</p>
@@ -28,7 +28,7 @@ export default {
 			required: true,
 		},
 		maskAmt: {
-			type: Number,
+			type: Object,
 			required: true,
 		},
 	},
@@ -38,19 +38,26 @@ export default {
 				'adult': '成人',
 				'child': '兒童',
 			},
-			safeMaskAmt: 100,
+			toalMaskAmt: 0,
 		};
 	},
 	computed: {
 		maskStatus() {
-			if (this.maskAmt >= this.safeMaskAmt) {
+			const safeAmt = this.toalMaskAmt * 0.1;
+
+			if (this.maskAmt[this.type] >= safeAmt) {
 				return 'available';
 			}
-			if (this.maskAmt < 1) {
+			if (this.maskAmt[this.type] < 1) {
 				return 'unavailable';
 			}
-			return 'danger;'
+			return 'danger';
 		},
+	},
+	created() {
+		for (let type in this.maskAmt) {
+			this.toalMaskAmt += this.maskAmt[type];
+		}
 	},
 }
 </script>
