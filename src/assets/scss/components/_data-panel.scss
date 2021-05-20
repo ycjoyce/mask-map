@@ -1,6 +1,8 @@
 .data-panel {
     background-color: map-get($theme-color, bgc);
     padding: 20px 30px;
+    height: 100%;
+    overflow-y: scroll;
 
     >*:not(:last-child) {
         margin-bottom: 20px;

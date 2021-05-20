@@ -1,8 +1,13 @@
 <template>
   <div>
-		<my-header/>
+		<my-header ref="my-header"/>
 
-		<div class="main-container">
+		<div
+			class="main-container"
+			:style="{
+				height: `calc(100vh - ${headerHeight}px)`
+			}"
+		>
 			<data-panel
 				:all-pharmacy-data="allPharmacyData"
 			/>
@@ -30,7 +35,14 @@ export default {
 	data() {
 		return {
 			allPharmacyData: null,
+			headerHeight: 0,
 		};
+	},
+	methods: {
+		getHeaderHeight() {
+			const headerEl = this.$refs['my-header']['$el'];
+			return headerEl.offsetHeight;
+		},
 	},
 	created() {
 		fetchData(
@@ -38,6 +50,9 @@ export default {
 		).then((res) => {
 			this.allPharmacyData = res.features;
 		});
+	},
+	mounted() {
+		this.headerHeight = this.getHeaderHeight();
 	},
 }
 </script>
