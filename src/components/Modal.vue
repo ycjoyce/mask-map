@@ -6,6 +6,7 @@
 				class="modal-close"
 				:src="require('@/assets/img/ic_close.png')"
 				@click="closeModal"
+				v-if="ableToClose"
 			>
 
 			<slot></slot>
@@ -15,6 +16,15 @@
 
 <script>
 export default {
+	props: {
+		ableToClose: {
+			type: Boolean,
+			required: false,
+			default() {
+				return true;
+			},
+		},
+	},
 	methods: {
 		closeModal() {
 			this.$emit('closeModal', false);

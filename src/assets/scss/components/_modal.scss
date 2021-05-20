@@ -5,10 +5,12 @@
     left: 0;
     top: 0;
     background-color: rgba(#000, .8);
-    z-index: 20;
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
+    color: #fff;
 }
 
 .modal-content {
