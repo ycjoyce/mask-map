@@ -1,8 +1,19 @@
 <template>
   <aside class="data-panel">
+    <modal
+      v-show="ruleModal"
+      @closeModal="toggleRuleModal"
+    >
+      <img
+        :src="require('@/assets/img/available_rule.jpeg')"
+      >
+    </modal>
+
     <search-bar/>
 
-    <available-cal/>
+    <available-cal
+      @openRuleModal="toggleRuleModal"
+    />
 
     <data-detail/>
 
@@ -19,6 +30,7 @@
 </template>
 
 <script>
+import Modal from '@/components/Modal.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import AvailableCal from '@/components/AvailableCal.vue';
 import DataDetail from '@/components/DataDetail.vue';
@@ -26,6 +38,7 @@ import PharmacyCard from '@/components/PharmacyCard.vue';
 
 export default {
 	components: {
+    Modal,
     SearchBar,
     AvailableCal,
     DataDetail,
@@ -41,6 +54,7 @@ export default {
     return {
       pharmacyStartIdx: 0,
       pharmcyShowedAmt: 20,
+      ruleModal: false,
     };
   },
   computed: {
@@ -49,6 +63,11 @@ export default {
         return [];
       }
       return this.allPharmacyData.slice(this.pharmacyStartIdx, this.pharmacyStartIdx + this.pharmcyShowedAmt);
+    },
+  },
+  methods: {
+    toggleRuleModal(status) {
+      this.ruleModal = status;
     },
   },
 }

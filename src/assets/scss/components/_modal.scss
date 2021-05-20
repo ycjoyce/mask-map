@@ -1,0 +1,29 @@
+.modal {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(#000, .8);
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 80%;
+    position: relative;
+
+    >*:not(.modal-close) {
+        max-width: 100%;
+    }
+}
+
+.modal-close {
+    display: inline-block;
+    width: 20px;
+    position: absolute;
+    right: -20px;
+    top: -20px;
+}

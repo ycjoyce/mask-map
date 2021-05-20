@@ -49,10 +49,10 @@ export default {
 			).then((res) => {
 				this.allPharmacyData = res.features;
 
-				if (this.$store.state.refreshListTime) {
+				if (this.$store.state.refreshListTime.time) {
 					return;
 				}
-				
+
 				this.$store.commit('refreshList', { 
 					click: false,
 					time: Date.now()

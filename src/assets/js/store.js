@@ -5,7 +5,10 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        refreshListTime: null,
+        refreshListTime: {
+            click: null,
+            time: null,
+        },
     },
     mutations: {
         refreshList(state, data) {
