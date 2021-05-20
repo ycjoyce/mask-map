@@ -1,6 +1,6 @@
 <template>
   <div class="pharmacy-info">
-    <div class="pharmacy-title available">
+    <div :class="['pharmacy-title', availableStatus]">
 			<h2 class="pharmacy-name text-color-pmr text-bold title-ttr">
 				{{pharmacyInfo.name}}
 			</h2>
@@ -9,8 +9,14 @@
 				{{calDistance}} km
 			</span>
 
-			<span class="pharmacy-status text-sm text-bg-available corner-round-sm">
-				休息中
+			<span
+				:class="[
+					'pharmacy-status',
+					'text-sm',
+					`text-bg-${availableStatus}`,
+					'corner-round-sm']"
+			>
+				{{availableStatusMap[availableStatus]}}
 			</span>
     </div>
 
@@ -65,6 +71,29 @@ export default {
 				'phone': '電話',
 				'note': '備註',
 			},
+			availableStatusMap: {
+				'available': '營業中',
+				'unavailable': '休息中',
+				'danger': '即將休息',
+			},
+			transferStatusMap: {
+				'看診': 'available',
+				'休診': 'unavailable',
+			},
+			weekdayMap: {
+				0: '星期日',
+				1: '星期一',
+				2: '星期二',
+				3: '星期三',
+				4: '星期四',
+				5: '星期五',
+				6: '星期六',
+			},
+			timeMap: {
+				'上午': 'morning',
+				'下午': 'afternoon',
+				'晚上': 'night',
+			},
 		};
 	},
 	computed: {
@@ -79,9 +108,70 @@ export default {
 			if (originalCoords[0] > 100) {
 				[coords[0], coords[1]] = [coords[1], coords[0]];
 			}
-			
+
 			return getDistance(this.$store.state.userCurPos, coords).toFixed(2);
 		},
+		availableStatus() {
+			if (!this.pharmacyInfo || this.getTimePeriod(Date.now())) {
+				return 'unavailable';
+			}
+			
+			const hour = new Date().getHours();
+			let seamTimes = {
+				11: ['morning', 'afternoon'],
+				17: ['afternoon', 'night'],
+			};
+
+			for (let time in seamTimes) {
+				if (hour === time) {
+					if (
+						this.transferStatusMap[this.analyzeDataStatus(new Date().getDay())[seamTimes[time][0]]] === 'available' &&
+						this.transferStatusMap[this.analyzeDataStatus(new Date().getDay())[seamTimes[time][1]]] === 'unavailable'
+					) {
+						return 'danger';
+					}
+				}
+			}
+
+			return this.transferStatusMap[
+				this.analyzeDataStatus(new Date().getDay())[
+					this.getTimePeriod(Date.now())
+				]
+			];
+		},
+		analyzeDataStatus() {
+			return (weekday) => {
+				const availableArr = this.pharmacyInfo.available.split('、');
+				const targetDayAvailableArr = availableArr.filter((item) => item.includes(this.weekdayMap[weekday]));
+
+				const result = targetDayAvailableArr.reduce((a, e) => {
+					const time = this.timeMap[e.substring(3, 5)];
+					const status = e.substr(5);
+					a[time] = this.transferStatusMap[status];
+					return a;
+				}, {});
+				
+				return result;
+			}
+		},
+		getTimePeriod() {
+			return (time) => {
+				const hour = new Date(time).getHours();
+				if (hour >= 9 && hour < 12) {
+					return 'morning';
+				}
+				if (hour >= 12 && hour < 18) {
+					return 'afternoon';
+				}
+				if (hour >= 18 && hour < 23) {
+					return 'night';
+				}
+				return false;
+			}
+		},
+	},
+	mounted() {
+		console.log(this.getTimePeriod(Date.now()));
 	},
 }
 </script>

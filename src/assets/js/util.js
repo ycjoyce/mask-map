@@ -1,6 +1,4 @@
 export const getDistance = ([lat1, lng1], [lat2, lng2]) => {
-	// console.log(1, [lat1, lng1]);
-	// console.log(2, [lat2, lng2]);
 	const radLat1 = lat1 * Math.PI / 180;
 	const radLat2 = lat2 * Math.PI / 180;
 	const a = radLat1 - radLat2;
