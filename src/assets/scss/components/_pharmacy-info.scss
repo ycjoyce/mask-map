@@ -26,12 +26,13 @@
     }
 }
 
-.pharmacy-distance {
-    align-self: flex-end;
-}
-
 .pharmacy-status {
     padding: 3px 5px;
+}
+
+.pharmacy-distance,
+.pharmacy-status {
+    flex: 0 0 auto;
 }
 
 .pharmacy-detail-list-item {

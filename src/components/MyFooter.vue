@@ -21,8 +21,10 @@
 		</div>
 
 		<p class="footer-signature text-sm">
-			Joyce Code / PY Design
+			<a target="_blank" href="undefined/icons/set/marker--v1">Marker icon</a> icon by <a target="_blank" href="">Icons8</a>
+			<br>Joyce Code / PY Design
 		</p>
+
   </footer>
 </template>
 

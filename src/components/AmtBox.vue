@@ -2,9 +2,8 @@
   <div
     :class="[
 			'amt-box',
-			'amt-box-available',
 			'corner-round-sm',
-			`amt-box-${maskStatus}`
+			`amt-box-${maskStatus(totalMask, maskAmt[type])}`
 		]"
 	>
 		<p class="amt-box-title">
@@ -21,7 +20,10 @@
 </template>
 
 <script>
+import getAvailableStatus from '@/assets/js/getAvailableStatus';
+
 export default {
+	mixins: [getAvailableStatus],
 	props: {
 		type: {
 			type: String,
@@ -38,25 +40,12 @@ export default {
 				'adult': '成人',
 				'child': '兒童',
 			},
-			toalMaskAmt: 0,
+			totalMask: 0,
 		};
-	},
-	computed: {
-		maskStatus() {
-			const safeAmt = this.toalMaskAmt * 0.1;
-
-			if (this.maskAmt[this.type] >= safeAmt) {
-				return 'available';
-			}
-			if (this.maskAmt[this.type] < 1) {
-				return 'unavailable';
-			}
-			return 'danger';
-		},
 	},
 	created() {
 		for (let type in this.maskAmt) {
-			this.toalMaskAmt += this.maskAmt[type];
+			this.totalMask += this.maskAmt[type];
 		}
 	},
 }
