@@ -112,11 +112,11 @@ export default {
 			return getDistance(this.$store.state.userCurPos, coords).toFixed(2);
 		},
 		availableStatus() {
-			if (!this.pharmacyInfo || this.getTimePeriod(Date.now())) {
+			if (Object.keys(this.pharmacyInfo).length < 1 || !this.getTimePeriod(Date.now())) {
 				return 'unavailable';
 			}
-			
-			const hour = new Date().getHours();
+
+			const hour = `${new Date().getHours()}`;
 			let seamTimes = {
 				11: ['morning', 'afternoon'],
 				17: ['afternoon', 'night'],
@@ -125,19 +125,15 @@ export default {
 			for (let time in seamTimes) {
 				if (hour === time) {
 					if (
-						this.transferStatusMap[this.analyzeDataStatus(new Date().getDay())[seamTimes[time][0]]] === 'available' &&
-						this.transferStatusMap[this.analyzeDataStatus(new Date().getDay())[seamTimes[time][1]]] === 'unavailable'
+						this.analyzeDataStatus(new Date().getDay())[seamTimes[time][0]] === 'available' &&
+						this.analyzeDataStatus(new Date().getDay())[seamTimes[time][1]] === 'unavailable'
 					) {
 						return 'danger';
 					}
 				}
 			}
 
-			return this.transferStatusMap[
-				this.analyzeDataStatus(new Date().getDay())[
-					this.getTimePeriod(Date.now())
-				]
-			];
+			return this.analyzeDataStatus(new Date().getDay())[this.getTimePeriod(Date.now())];
 		},
 		analyzeDataStatus() {
 			return (weekday) => {
@@ -169,9 +165,6 @@ export default {
 				return false;
 			}
 		},
-	},
-	mounted() {
-		console.log(this.getTimePeriod(Date.now()));
 	},
 }
 </script>
