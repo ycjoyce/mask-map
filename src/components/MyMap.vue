@@ -207,7 +207,11 @@ export default {
     '$store.state.checkedPharmacy': async function(val) {
       let targetPharmacy = this.allPharmacyData.find((pharmacy) => pharmacy.properties.id === val);
       let coords = targetPharmacy.geometry.coordinates;
-      
+
+      if (coords[0] > 100) {
+        [coords[0], coords[1]] = [coords[1], coords[0]];
+      }
+
       this.map.flyTo(coords);
 
       await this.getTargetLayer(val).then((res) => {
