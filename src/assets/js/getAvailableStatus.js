@@ -86,8 +86,8 @@ export default {
         maskStatus() {
 			return (totalMask, targetAmt) => {
 				const safeAmt = totalMask * 0.1;
-
-				if (targetAmt >= safeAmt) {
+				
+				if (targetAmt >= safeAmt && targetAmt > 0) {
 					return 'available';
 				}
 				if (targetAmt < 1) {

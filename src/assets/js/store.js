@@ -11,6 +11,7 @@ const store = new Vuex.Store({
 		},
 		mapCenter: [25.0457377,121.5129428],
 		userCurPos: null,
+		checkedPharmacy: null,
 	},
 	mutations: {
 		refreshList(state, data) {
@@ -21,6 +22,9 @@ const store = new Vuex.Store({
 		},
 		setUserCurPos(state, coords) {
 			state.userCurPos = coords;
+		},
+		setCheckedPharmacy(state, id) {
+			state.checkedPharmacy = id;
 		},
 	},
 });

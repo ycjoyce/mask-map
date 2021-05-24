@@ -29,6 +29,7 @@ export default {
       map: null,
       points: [],
       distanceArange: 5,
+      markers: [],
     };
   },
   methods: {
@@ -119,6 +120,7 @@ export default {
           let key = Object.keys(ageType)[0];
           let val = Object.values(ageType)[0];
           totalMask += point.properties[`mask_${key}`];
+
           amtBoxTemplate += `
             <div
               class="amt-box amt-box-${this.maskStatus(totalMask, point.properties[`mask_${key}`])} corner-round-sm"
@@ -160,13 +162,21 @@ export default {
             iconUrl: require(`@/assets/img/ic_point_${status}.png`),
             iconSize: [30, 30],
           });
+
+          let popup = L.popup({
+            className: 'map-popup'
+          }).setContent(
+            amtBoxTemplate(status, point)
+          );
           
           let marker = L.marker(point.coords, {
             icon: customIcon,
             opacity: 1,
-          }).addTo(this.map).bindPopup(amtBoxTemplate(status, point), {
-            className: 'map-popup'
-          });
+          }).addTo(this.map).bindPopup(popup);
+
+          marker._pharmacyId = point.properties.id;
+
+          this.markers.push(marker);
 
           marker.on('click', (e) => {
             let {lat, lng} = e.latlng;
@@ -184,6 +194,9 @@ export default {
         this.drawMarkers();
       });
     },
+    async getTargetLayer(id) {
+      return this.markers.find((marker) => marker._pharmacyId === id);
+    },
   },
   watch: {
     allPharmacyData(val, oldVal) {
@@ -191,8 +204,15 @@ export default {
         this.getUserPos();
       }
     },
-    center(val) {
-      this.$store.commit('setMapCenter', val);
+    '$store.state.checkedPharmacy': async function(val) {
+      let targetPharmacy = this.allPharmacyData.find((pharmacy) => pharmacy.properties.id === val);
+      let coords = targetPharmacy.geometry.coordinates;
+      
+      this.map.flyTo(coords);
+
+      await this.getTargetLayer(val).then((res) => {
+        res.openPopup();
+      });
     },
   },
   mounted() {

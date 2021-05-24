@@ -37,6 +37,7 @@
 				<button
 					class="btn text-sm text-underline text-color-basic list-item-btn"
 					v-if="detailKey === 'address'"
+					@click="checkOnMap"
 				>
 					於地圖查看
 				</button>
@@ -77,6 +78,11 @@ export default {
 				'note': '備註',
 			},
 		};
+	},
+	methods: {
+		checkOnMap() {
+			this.$store.commit('setCheckedPharmacy', this.pharmacyInfo.id);
+		},
 	},
 }
 </script>
