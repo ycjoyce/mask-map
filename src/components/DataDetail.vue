@@ -1,8 +1,11 @@
 <template>
   <div class="data-detail">
     <ul class="data-detail-list list text-sm">
-			<li class="list-item">
-				距離附近 5公里 以內的供應商
+			<li
+				class="list-item"
+				v-show="range"
+			>
+				{{range}}的供應商
 			</li>
 
 			<li class="list-item">
@@ -21,6 +24,12 @@
 
 <script>
 export default {
+	props: {
+		range: {
+			type: String,
+			required: true,
+		},
+	},
 	methods: {
 		refreshList() {
 			this.$store.commit('refreshList', {

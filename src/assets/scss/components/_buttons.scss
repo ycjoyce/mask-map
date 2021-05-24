@@ -6,8 +6,12 @@
     padding: 5px 10px;
     transition: all .3s;
 
-    &:hover {
+    &:not(:disabled):hover {
         filter: brightness(1.1);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
     }
 
     &-solid {
@@ -15,6 +19,10 @@
             &-#{$key} {
                 background-color: $val;
                 color: #fff;
+
+                &:disabled {
+                    background-color: map-get($theme-color, unavailable);
+                }
             }
         }
     }
@@ -27,6 +35,11 @@
 
                 &:hover {
                     background-color: rgba($val, .1);
+                }
+
+                &:disabled {
+                    border: 2px solid map-get($theme-color, unavailable) !important;
+                    color: map-get($theme-color, unavailable) !important;
                 }
             }
         }
