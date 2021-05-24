@@ -42,12 +42,13 @@
 					於地圖查看
 				</button>
 
-				<button
+				<a
 					class="btn text-sm text-underline text-color-basic list-item-btn"
 					v-else-if="detailKey === 'phone'"
+					:href="`tel:${formattedTel(pharmacyInfo.phone)}`"
 				>
 					撥打電話
-				</button>
+				</a>
 			</li>
 		</ul>
   </div>
@@ -78,6 +79,15 @@ export default {
 				'note': '備註',
 			},
 		};
+	},
+	computed: {
+		formattedTel() {
+			return (phone) => {
+				let dist = phone.split(')').shift().substr(2);
+				let num = phone.split(')').pop();
+				return `+886-${dist}-${num}`;
+			}
+		},
 	},
 	methods: {
 		checkOnMap() {
