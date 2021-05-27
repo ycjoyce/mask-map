@@ -24,33 +24,41 @@ export default {
 				'下午': 'afternoon',
 				'晚上': 'night',
 			},
+			targetTime: null,
         };
     },
     computed: {
         availableStatus() {
             return (pharmacyInfo) => {
-                if (Object.keys(pharmacyInfo).length < 1 || !this.getTimePeriod(Date.now())) {
+				let targetTime = this.targetTime || Date.now();
+				this.targetTime = null;
+
+                if (Object.keys(pharmacyInfo).length < 1 || !this.getTimePeriod(targetTime)) {
                     return 'unavailable';
                 }
     
-                const hour = `${new Date().getHours()}`;
+                const hour = `${new Date(targetTime).getHours()}`;
                 let seamTimes = {
                     11: ['morning', 'afternoon'],
                     17: ['afternoon', 'night'],
                 };
-    
+				let statusMap = this.analyzeDataStatus(
+					new Date(targetTime).getDay(),
+					pharmacyInfo
+				);
+
                 for (let time in seamTimes) {
                     if (hour === time) {
                         if (
-                            this.analyzeDataStatus(new Date().getDay(), pharmacyInfo)[seamTimes[time][0]] === 'available' &&
-                            this.analyzeDataStatus(new Date().getDay(), pharmacyInfo)[seamTimes[time][1]] === 'unavailable'
+                            statusMap[seamTimes[time][0]] === 'available' &&
+                            statusMap[seamTimes[time][1]] === 'unavailable'
                         ) {
                             return 'danger';
                         }
                     }
                 }
 
-                return this.analyzeDataStatus(new Date().getDay(), pharmacyInfo)[this.getTimePeriod(Date.now())];
+                return statusMap[this.getTimePeriod(targetTime)];
             }
 		},
 		analyzeDataStatus() {
@@ -96,5 +104,16 @@ export default {
 				return 'danger';
 			}
 		},
-    },
+	},
+	watch: {
+		'$store.state.refreshListTime': function({ click, time }) {
+			if (this.targetTime === time) {
+				return;
+			}
+
+			if (click) {
+				this.targetTime = time;
+			}
+		},
+	},
 };
