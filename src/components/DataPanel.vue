@@ -9,7 +9,10 @@
       >
     </modal>
 
-    <search-bar/>
+    <search-bar
+      @inputVal="handleInputVal"
+      :disabled="!!!townMap"
+    />
 
     <available-cal
       @openRuleModal="toggleRuleModal"
@@ -68,6 +71,8 @@ export default {
       pharmacySorted: [],
       dataDetailRange: '',
       range: 5,
+      townMap: null,
+      filteredByInput: [],
     };
   },
   computed: {
@@ -115,12 +120,101 @@ export default {
         this.pharmacyToShow.length + this.pharmacyShowedAmt
       );
     },
+    handleInputVal(val) {
+      if (!val) {
+        return;
+      }
+
+      let filteredCounty = this.townMap.filter((item) => (
+        val.includes(item.county) || item.county.includes(val)
+      )).map((item) => ({ county: item.county }));
+      let filteredTown = [];
+      let filteredCunli = [];
+
+      this.townMap.forEach((item) => {
+        item.towns.forEach((town) => {
+          if (val.includes(town.town) || town.town.includes(val)) {
+            filteredTown.push({
+              county: item.county,
+              town: town.town,
+            });
+          }
+
+          town.cunli.forEach((cunli) => {
+            if (val.includes(cunli) || cunli.includes(val)) {
+              filteredCunli.push({
+                county: item.county,
+                town: town.town,
+                cunli,
+              });
+            }
+          });
+        });
+      });
+
+      let allFiltered = filteredCounty.concat(filteredTown);
+      allFiltered = allFiltered.concat(filteredCunli);
+
+      this.filteredByInput = allFiltered;
+    },
+    initTownMap(data) {
+      let result = data.reduce((a, e) => {
+        let targetCounty = e.properties.county;
+        let exist = a.find((item) => item.county === targetCounty);
+
+        if (!exist && targetCounty) {
+          a.push({
+            county: targetCounty,
+          });
+        }
+
+        return a;
+      }, []).map((item) => {
+        let towns = data.filter((pharmacy) => (
+          pharmacy.properties.county === item.county
+        )).reduce((a, e) => {
+          if (!a.find((el) => el.town === e.properties.town)) {
+            a.push({
+              town: e.properties.town,
+            });
+          }
+          return a;
+        }, []).map((town) => {
+          let cunli = data.filter((pharmacy) => (
+            pharmacy.properties.town === town.town &&
+            pharmacy.properties.county === item.county
+          )).map((pharmacy) => (
+            pharmacy.properties.cunli
+          )).reduce((a, e) => {
+            if (!a.includes(e)) {
+              a.push(e);
+            }
+            return a;
+          }, []);
+          town.cunli = cunli;
+          return town;
+        });
+
+        item.towns = towns;
+        return item;
+      });
+
+      this.townMap = result;
+    },
   },
   watch: {
     '$store.state.userCurPos': function(val, oldVal) {
       if (!oldVal && val) {
         this.initPharmacyToShow();
       }
+    },
+    allPharmacyData(val, oldVal) {
+      if (!oldVal && val) {
+        this.initTownMap(val);
+      }
+    },
+    filteredByInput(val) {
+      console.log(val);
     },
   },
   created() {
