@@ -12,6 +12,7 @@
     <search-bar
       @inputVal="handleInputVal"
       :disabled="!!!townMap"
+      :filteredData="filteredByInput"
     />
 
     <available-cal
@@ -124,82 +125,59 @@ export default {
       if (!val) {
         return;
       }
+      
+      let keys = [];
 
-      let filteredCounty = this.townMap.filter((item) => (
-        val.includes(item.county) || item.county.includes(val)
-      )).map((item) => ({ county: item.county }));
-      let filteredTown = [];
-      let filteredCunli = [];
+      let allFiltered = this.townMap.filter((location) => {
+        let exist = {};
+        for (let key in location) {
+          keys.push(key);
+          exist[key] = val.includes(location[key]) || location[key].includes(val);
+        }
+        let { county, town, cunli } = exist;
 
-      this.townMap.forEach((item) => {
-        item.towns.forEach((town) => {
-          if (val.includes(town.town) || town.town.includes(val)) {
-            filteredTown.push({
-              county: item.county,
-              town: town.town,
-            });
-          }
-
-          town.cunli.forEach((cunli) => {
-            if (val.includes(cunli) || cunli.includes(val)) {
-              filteredCunli.push({
-                county: item.county,
-                town: town.town,
-                cunli,
-              });
-            }
-          });
-        });
+        return county || town || cunli;
       });
 
-      let allFiltered = filteredCounty.concat(filteredTown);
-      allFiltered = allFiltered.concat(filteredCunli);
+      let filteredReduce = {};
 
-      this.filteredByInput = allFiltered;
-    },
-    initTownMap(data) {
-      let result = data.reduce((a, e) => {
-        let targetCounty = e.properties.county;
-        let exist = a.find((item) => item.county === targetCounty);
-
-        if (!exist && targetCounty) {
-          a.push({
-            county: targetCounty,
-          });
-        }
-
-        return a;
-      }, []).map((item) => {
-        let towns = data.filter((pharmacy) => (
-          pharmacy.properties.county === item.county
+      for (let key of keys) {
+        filteredReduce[key] = allFiltered.filter((location) => (
+          val.includes(location[key]) || location[key].includes(val)
         )).reduce((a, e) => {
-          if (!a.find((el) => el.town === e.properties.town)) {
-            a.push({
-              town: e.properties.town,
-            });
+          if (!a.find((item) => item[key] === e[key])) {
+            let el = {
+              county: e.county,
+            };
+            if (key === 'town' || key === 'cunli') {
+              el.town = e.town;
+            }
+            if (key === 'cunli') {
+              el.cunli = e.cunli;
+            }
+            a.push(el);
           }
           return a;
-        }, []).map((town) => {
-          let cunli = data.filter((pharmacy) => (
-            pharmacy.properties.town === town.town &&
-            pharmacy.properties.county === item.county
-          )).map((pharmacy) => (
-            pharmacy.properties.cunli
-          )).reduce((a, e) => {
-            if (!a.includes(e)) {
-              a.push(e);
-            }
-            return a;
-          }, []);
-          town.cunli = cunli;
-          return town;
-        });
+        }, []);
+      }
 
-        item.towns = towns;
-        return item;
-      });
+      let result = [];
 
-      this.townMap = result;
+      for (let res in filteredReduce) {
+        result = result.concat(filteredReduce[res]);
+      }
+
+      this.filteredByInput = result;
+    },
+    initTownMap(data) {
+      this.townMap = data.map((pharmacy) => {
+        let county = pharmacy.properties.county;
+        let town = pharmacy.properties.town;
+        let cunli = pharmacy.properties.cunli;
+        return { county, town, cunli };
+      }).filter(({ county, town, cunli }) => (
+        county || town || cunli
+      ));
     },
   },
   watch: {
@@ -212,9 +190,6 @@ export default {
       if (!oldVal && val) {
         this.initTownMap(val);
       }
-    },
-    filteredByInput(val) {
-      console.log(val);
     },
   },
   created() {

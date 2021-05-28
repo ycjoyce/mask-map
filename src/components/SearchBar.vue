@@ -5,8 +5,8 @@
 				type="text"
 				placeholder="請輸入地址或區域"
 				class="search-input input-border input-round-sm"
-				@input="handleInputVal"
 				:disabled="disabled"
+				v-model="inputVal"
 			>
 
 			<result-list v-show="false"/>
@@ -36,13 +36,21 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		filteredData: {
+			type: Array,
+			required: false,
+		},
 	},
 	components: {
 		ResultList,
 	},
-	methods: {
-		handleInputVal(e) {
-			let val = e.target.value.trim();
+	data() {
+		return {
+			inputVal: '',
+		};
+	},
+	watch: {
+		inputVal(val) {
 			this.$emit('inputVal', val);
 		},
 	},
