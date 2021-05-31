@@ -27,9 +27,11 @@ export default {
       center: this.$store.state.mapCenter,
       zoom: 15,
       map: null,
+      originalPoints: [],
       points: [],
       distanceArange: 5,
       markers: [],
+      flyByCheckedPharmacy: false,
     };
   },
   methods: {
@@ -69,35 +71,40 @@ export default {
         zoom: this.zoom,
       });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+      L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      ).addTo(this.map);
       
-      await this.getPoints().then(() => {
-        this.drawMarkers();
-      }).then(() => {
-        this.toggleModal(false);
-      });
+      await this.initPoints();
+      await this.getPoints();
+      this.drawMarkers();
+      this.toggleModal(false);
+      this.$store.commit('setMapMounted');
 
       this.map.on('moveend', this.handleMapMove);
     },
-    async getPoints() {
-      this.points = this.allPharmacyData.map((point) => (
+    async initPoints() {
+      this.originalPoints = this.allPharmacyData.map((point) => (
         {
           properties: point.properties,
           coords: point.geometry.coordinates
         }
       ));
 
-      this.points.forEach((point) => {
+      this.originalPoints.forEach((point) => {
         if (point.coords[0] > 100) {
           [point.coords[0], point.coords[1]] = [point.coords[1], point.coords[0]];
         }
       });
-
-      this.points = this.points.filter((point) => (
+    },
+    async getPoints() {
+      this.points = this.originalPoints.filter((point) => (
         getDistance(point.coords, this.center) <= this.distanceArange
       ));
     },
     drawMarkers() {
+      let finished = false;
+      
       let amtBoxTemplate = (status, point) => {
         let ageTypes = [{'adult': '成人'}, {'child': '兒童'}];
         let amtBoxTemplate = `
@@ -142,7 +149,7 @@ export default {
         return amtBoxTemplate;
       };
       
-      this.points.forEach(async (point) => {
+      this.points.forEach(async (point, index, arr) => {
         let timer;
         let getStatus = () => {
           return new Promise((resolve) => {
@@ -155,47 +162,62 @@ export default {
           });
         };
 
-        await getStatus().then((status) => {
-          clearInterval(timer);
-          
-          let customIcon = L.icon({
-            iconUrl: require(`@/assets/img/ic_point_${status}.png`),
-            iconSize: [30, 30],
-          });
-
-          let popup = L.popup({
-            className: 'map-popup'
-          }).setContent(
-            amtBoxTemplate(status, point)
-          );
-          
-          let marker = L.marker(point.coords, {
-            icon: customIcon,
-            opacity: 1,
-          }).addTo(this.map).bindPopup(popup);
-
-          marker._pharmacyId = point.properties.id;
-
-          this.markers.push(marker);
-
-          marker.on('click', (e) => {
-            let {lat, lng} = e.latlng;
-            let coords = [lat, lng];
-            this.map.flyTo(coords);
-          });
+        let status = await getStatus();
+        clearInterval(timer);
+        
+        let customIcon = L.icon({
+          iconUrl: require(`@/assets/img/ic_point_${status}.png`),
+          iconSize: [30, 30],
         });
+
+        let popup = L.popup({
+          className: 'map-popup'
+        }).setContent(
+          amtBoxTemplate(status, point)
+        );
+        
+        let marker = L.marker(point.coords, {
+          icon: customIcon,
+          opacity: 1,
+        }).addTo(this.map).bindPopup(popup);
+
+        marker._name = point.properties.name;
+        marker._pharmacyId = point.properties.id;
+
+        this.markers.push(marker);
+
+        marker.on('click', (e) => {
+          let {lat, lng} = e.latlng;
+          let coords = [lat, lng];
+          this.map.flyTo(coords);
+        });
+
+        if (index === arr.length - 1) {
+          finished = true;
+        }
+      });
+
+      return new Promise((resolve) => {
+        let parentTimer = setInterval(() => {
+          if (finished) {
+            clearInterval(parentTimer);
+            resolve();
+          }
+        }, 50);
       });
     },
     async handleMapMove() {
       const {lat, lng} = this.map.getCenter();
       this.center = [lat, lng];
 
-      await this.getPoints().then(() => {
-        this.drawMarkers();
-      });
-    },
-    async getTargetLayer(id) {
-      return this.markers.find((marker) => marker._pharmacyId === id);
+      await this.getPoints();
+      await this.drawMarkers();
+      if (this.flyByCheckedPharmacy) {
+        this.markers.find((marker) => (
+          marker._pharmacyId === this.flyByCheckedPharmacy
+        )).openPopup();
+      }
+      this.flyByCheckedPharmacy = false;
     },
   },
   watch: {
@@ -204,7 +226,7 @@ export default {
         this.getUserPos();
       }
     },
-    '$store.state.checkedPharmacy': async function(val) {
+    '$store.state.checkedPharmacy': function(val) {
       let targetPharmacy = this.allPharmacyData.find((pharmacy) => pharmacy.properties.id === val);
       let coords = targetPharmacy.geometry.coordinates;
 
@@ -213,10 +235,7 @@ export default {
       }
 
       this.map.flyTo(coords);
-
-      await this.getTargetLayer(val).then((res) => {
-        res.openPopup();
-      });
+      this.flyByCheckedPharmacy = val;
     },
   },
   mounted() {

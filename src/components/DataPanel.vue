@@ -11,7 +11,8 @@
 
     <search-bar
       @inputVal="handleInputVal"
-      :disabled="!!!townMap"
+      @chooseLocation="chooseLocation"
+      :disabled="disabled"
       :filteredData="filteredByInput"
     />
 
@@ -74,6 +75,7 @@ export default {
       range: 5,
       townMap: null,
       filteredByInput: [],
+      disabled: true,
     };
   },
   computed: {
@@ -121,11 +123,7 @@ export default {
         this.pharmacyToShow.length + this.pharmacyShowedAmt
       );
     },
-    handleInputVal(val) {
-      if (!val) {
-        return;
-      }
-      
+    async getAllFiltered(val) {
       let keys = [];
 
       let allFiltered = this.townMap.filter((location) => {
@@ -139,6 +137,13 @@ export default {
         return county || town || cunli;
       });
 
+      return {
+        val,
+        allFiltered,
+        keys,
+      };
+    },
+    async filteredReduce({ val, allFiltered, keys }) {
       let filteredReduce = {};
 
       for (let key of keys) {
@@ -161,6 +166,18 @@ export default {
         }, []);
       }
 
+      return filteredReduce;
+    },
+    async handleInputVal({ val, el }) {
+      if (!val) {
+        this.filteredByInput.splice(0);
+        el.focus();
+        return;
+      }
+      
+      let filteredData = await this.getAllFiltered(val);
+      let filteredReduce = await this.filteredReduce(filteredData);
+
       let result = [];
 
       for (let res in filteredReduce) {
@@ -168,6 +185,7 @@ export default {
       }
 
       this.filteredByInput = result;
+      el.focus();
     },
     initTownMap(data) {
       this.townMap = data.map((pharmacy) => {
@@ -179,6 +197,47 @@ export default {
         county || town || cunli
       ));
     },
+    chooseLocation({ location, input }) {
+      this.filteredByInput.splice(0);
+      let word = '';
+
+      if (!location) {
+        this.pharmacyFiltered = this.pharmacySorted.filter((pharmacy) => {
+          let keys = ['county', 'town', 'cunli'];
+          let exist = {};
+          for (let key of keys) {
+            exist[key] = pharmacy.properties[key] &&
+                        (pharmacy.properties[key].includes(input) ||
+                        input.includes(pharmacy.properties[key]));
+          }
+          return exist.county || exist.town || exist.cunli;
+        });
+        word = `「${input}」`;
+      } else {
+        this.pharmacyFiltered = this.pharmacySorted.filter((pharmacy) => {
+          let condition = true;
+          for (let key in location) {
+            if (!{}.hasOwnProperty.call(location, key)) {
+              continue;
+            }
+            if (key) {
+              condition = condition && pharmacy.properties[key] === location[key];
+            }
+          }
+          return condition;
+        });
+        for (let key in location) {
+          word += location[key];        
+        }
+      }
+
+      this.pharmacyToShow = this.pharmacyFiltered.slice(0, this.pharmacyShowedAmt);
+
+      if (this.pharmacyToShow.length < 1) {
+        word = `查無「${word}」`;
+      }
+      this.dataDetailRange = word;      
+    },
   },
   watch: {
     '$store.state.userCurPos': function(val, oldVal) {
@@ -189,6 +248,11 @@ export default {
     allPharmacyData(val, oldVal) {
       if (!oldVal && val) {
         this.initTownMap(val);
+      }
+    },
+    '$store.state.mapMounted': function(val, oldVal) {
+      if (!oldVal && val) {
+        this.disabled = false;
       }
     },
   },
