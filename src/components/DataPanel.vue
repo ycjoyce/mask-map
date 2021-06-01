@@ -243,11 +243,6 @@ export default {
     },
   },
   watch: {
-    '$store.state.userCurPos': function(val, oldVal) {
-      if (!oldVal && val) {
-        this.initPharmacyToShow();
-      }
-    },
     allPharmacyData(val, oldVal) {
       if (!oldVal && val) {
         this.initTownMap(val);
@@ -256,6 +251,7 @@ export default {
     '$store.state.mapMounted': function(val, oldVal) {
       if (!oldVal && val) {
         this.disabled = false;
+        this.initPharmacyToShow();
       }
     },
     '$store.state.refreshListTime': async function({ click }) {

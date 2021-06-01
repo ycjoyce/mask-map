@@ -54,6 +54,7 @@ export default {
     },
     errorGPS() {
       this.toggleModal('無法判斷您的所在位置，預設地點將為 台北車站');
+      this.$store.commit('setUserCurPos', this.$store.state.mapCenter);
 
       setTimeout(() => {
         this.initMap();
@@ -158,7 +159,7 @@ export default {
               if (status) {
                 resolve(status);
               }
-            }, 500);
+            }, 50);
           });
         };
 
@@ -187,12 +188,15 @@ export default {
         this.markers.push(marker);
 
         marker.on('click', (e) => {
-          let {lat, lng} = e.latlng;
+          let { lat, lng } = e.latlng;
           let coords = [lat, lng];
           this.map.flyTo(coords);
         });
 
-        if (index === arr.length - 1) {
+        if (
+          (this.flyByCheckedPharmacy && marker._pharmacyId === this.flyByCheckedPharmacy) ||
+          (!this.flyByCheckedPharmacy && index === arr.length - 1)
+        ) {
           finished = true;
         }
       });
@@ -207,7 +211,7 @@ export default {
       });
     },
     async handleMapMove() {
-      const {lat, lng} = this.map.getCenter();
+      const { lat, lng } = this.map.getCenter();
       this.center = [lat, lng];
 
       await this.getPoints();
