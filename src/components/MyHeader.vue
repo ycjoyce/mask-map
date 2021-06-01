@@ -12,7 +12,10 @@
 			</h1>
 		</div>
 
-		<navigator/>
+		<navigator
+			@openMaskRuleModal="openMaskRuleModal"
+			:curPage="curPage"
+		/>
 	</header>
 </template>
 
@@ -20,8 +23,19 @@
 import Navigator from '@/components/Navigator.vue';
 
 export default {
+	props: {
+		curPage: {
+			type: String,
+			required: true,
+		},
+	},
 	components: {
 		Navigator,
+	},
+	methods: {
+		openMaskRuleModal() {
+			this.$emit('openMaskRuleModal');
+		},
 	},
 }
 </script>

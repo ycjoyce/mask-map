@@ -1,6 +1,37 @@
 <template>
   <div>
-		<my-header ref="my-header"/>
+		<modal
+			class="mask-rule-modal"
+			v-show="showMaskRuleModal"
+			@closeModal="toggleMaskRuleModal(false)"
+		>
+			<img
+				:src="require('@/assets/img/mask_rule.jpeg')"
+				class="mask-rule-img"
+			>
+
+			<a
+				href="https://emask.taiwan.gov.tw/msk/index.jsp"
+				target="_blank"
+				class="btn btn-solid-white text-color-pmr corner-round-lg"
+			>
+				立即線上預購
+			</a>
+			
+			<a
+				href="https://www.nhi.gov.tw/Content_List.aspx?n=F834AD6472551F9A"
+				target="_blank"
+				class="btn btn-border-white text-color-white corner-round-lg"
+			>
+				下次可購買日試算
+			</a>
+		</modal>
+
+		<my-header
+			ref="my-header"
+			@openMaskRuleModal="toggleMaskRuleModal(true)"
+			:curPage="curPage"
+		/>
 
 		<div
 			class="main-container"
@@ -20,6 +51,7 @@
 </template>
 
 <script>
+import Modal from '@/components/Modal.vue';
 import MyHeader from '@/components/MyHeader.vue';
 import DataPanel from '@/components/DataPanel.vue';
 import MapPanel from '@/components/MapPanel.vue';
@@ -28,6 +60,7 @@ import fetchData from '@/assets/js/fetch';
 export default {
 	name: 'App',
 	components: {
+		Modal,
 		MyHeader,
 		DataPanel,
 		MapPanel,
@@ -36,6 +69,8 @@ export default {
 		return {
 			allPharmacyData: null,
 			headerHeight: 0,
+			showMaskRuleModal: false,
+			curPage: '口罩供給現況',
 		};
 	},
 	methods: {
@@ -58,6 +93,10 @@ export default {
 					time: Date.now()
 				});
 			});
+		},
+		toggleMaskRuleModal(status) {
+			this.showMaskRuleModal = status;
+			this.curPage = status ? '口罩怎麼買' : '口罩供給現況';
 		},
 	},
 	watch: {

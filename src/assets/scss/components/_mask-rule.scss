@@ -1,0 +1,14 @@
+.mask-rule-img {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    width: 700px;
+    max-width: 100%;
+}
+
+.mask-rule-modal {
+    z-index: 10000;
+    .btn:not(:last-child) {
+        margin-right: 20px;
+    }
+}

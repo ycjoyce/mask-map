@@ -41,7 +41,7 @@ body {
     &-color {
         @each $key, $val in $theme-color {
             &-#{$key} {
-                color: $val;
+                color: $val !important;
             }
         }
     }
