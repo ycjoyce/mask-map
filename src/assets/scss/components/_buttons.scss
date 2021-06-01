@@ -33,7 +33,7 @@
                 border: 2px solid $val;
                 color: $val;
 
-                &:hover {
+                &:not(:disabled):hover {
                     background-color: rgba($val, .1);
                 }
 

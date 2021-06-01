@@ -22,6 +22,7 @@
 
     <data-detail
       :range="dataDetailRange"
+      :disabled="disabled"
     />
 
     <pharmacy-card
@@ -76,6 +77,7 @@ export default {
       townMap: null,
       filteredByInput: [],
       disabled: true,
+      searchCondition: null,
     };
   },
   computed: {
@@ -200,6 +202,7 @@ export default {
     chooseLocation({ location, input }) {
       this.filteredByInput.splice(0);
       let word = '';
+      this.searchCondition = { location, input };
 
       if (!location) {
         this.pharmacyFiltered = this.pharmacySorted.filter((pharmacy) => {
@@ -253,6 +256,17 @@ export default {
     '$store.state.mapMounted': function(val, oldVal) {
       if (!oldVal && val) {
         this.disabled = false;
+      }
+    },
+    '$store.state.refreshListTime': async function({ click }) {
+      if (!click) {
+        return;
+      }
+
+      await this.initPharmacyToShow();
+
+      if (this.searchCondition) {
+        this.chooseLocation(this.searchCondition);
       }
     },
   },

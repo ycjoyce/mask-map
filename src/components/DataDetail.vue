@@ -16,6 +16,7 @@
 		<button
 			class="btn btn-border-pmr corner-round-lg"
 			@click="refreshList"
+			:disabled="disabled"
 		>
 			重整列表
 		</button>
@@ -27,6 +28,10 @@ export default {
 	props: {
 		range: {
 			type: String,
+			required: true,
+		},
+		disabled: {
+			type: Boolean,
 			required: true,
 		},
 	},

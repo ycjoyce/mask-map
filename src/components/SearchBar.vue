@@ -28,7 +28,7 @@
     
 		<button
 			class="btn btn-solid-pmr corner-round-sm box-sdw text-ttr search-submit"
-			:disabled="disabled"
+			:disabled="disabled || !inputVal"
 			@click="sendKeyword"
 		>
 			搜尋
