@@ -30,6 +30,7 @@
 		<my-header
 			ref="my-header"
 			@openMaskRuleModal="toggleMaskRuleModal(true)"
+			@backToDataPanel="backToDataPanel"
 			:curPage="curPage"
 		/>
 
@@ -41,10 +42,15 @@
 		>
 			<data-panel
 				:all-pharmacy-data="allPharmacyData"
+				@backToUserPos="backToUserPos = Date.now()"
+				v-show="$store.getters.rwd !== 'mobile' || panelChecked !== 'map-panel'"
 			/>
 
 			<map-panel
 				:all-pharmacy-data="allPharmacyData"
+				:reRender="reRenderMap"
+				:backToUserPos="backToUserPos"
+				v-show="$store.getters.rwd !== 'mobile' || panelChecked === 'map-panel'"
 			/>
 		</div>
 	</div>
@@ -71,6 +77,9 @@ export default {
 			headerHeight: 0,
 			showMaskRuleModal: false,
 			curPage: '口罩供給現況',
+			panelChecked: 'data-panel',
+			reRenderMap: false,
+			backToUserPos: null,
 		};
 	},
 	methods: {
@@ -98,6 +107,12 @@ export default {
 			this.showMaskRuleModal = status;
 			this.curPage = status ? '口罩怎麼買' : '口罩供給現況';
 		},
+		getWindowWidth() {
+			this.$store.commit('getWindowWidth', window.innerWidth);
+		},
+		backToDataPanel() {
+			this.$store.commit('setCheckedPharmacy', null);
+		},
 	},
 	watch: {
 		'$store.state.refreshListTime': function({ click, time }) {
@@ -107,12 +122,24 @@ export default {
 
 			this.fetchDataFromApi();
 		},
+		'$store.state.checkedPharmacy': function(val) {
+			if (!val) {
+				this.panelChecked = 'data-panel';
+				return;
+			}
+			this.panelChecked = 'map-panel';
+			this.reRenderMap = true;
+		},
 	},
 	created() {
 		this.fetchDataFromApi();
 	},
 	mounted() {
 		this.headerHeight = this.getHeaderHeight();
+		window.addEventListener('resize', this.getWindowWidth);
+	},
+	beforeDestroy() {
+		window.removeEventListener('resize', this.getWindowWidth);
 	},
 }
 </script>

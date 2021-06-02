@@ -1,6 +1,12 @@
 <template>
 	<header class="header">
-		<div class="header-logo-box logo-box">
+		<div
+			:class="[
+				'header-logo-box',
+				'logo-box',
+				{ active: navOpened && $store.getters.rwd === 'mobile' },
+			]"
+		>
 			<img
 				:src="require('@/assets/img/logo.png')"
 				alt="口罩即時查"
@@ -10,11 +16,22 @@
 			<h1 class="logo-title title-sdr text-color-pmr">
 				口罩即時查
 			</h1>
+
+			<input
+				type="image"
+				:src="navTogglerImg"
+				class="nav-toggler btn"
+				v-show="$store.getters.rwd === 'mobile'"
+				@click="toggleNav"
+			>
 		</div>
 
 		<navigator
 			@openMaskRuleModal="openMaskRuleModal"
+			@backToDataPanel="backToDataPanel"
+			@closeNav="navOpened = false"
 			:curPage="curPage"
+			v-show="$store.getters.rwd !== 'mobile' || navOpened"
 		/>
 	</header>
 </template>
@@ -32,9 +49,28 @@ export default {
 	components: {
 		Navigator,
 	},
+	data() {
+		return {
+			navOpened: false,
+		};
+	},
+	computed: {
+		navTogglerImg() {
+			if (!this.navOpened) {
+				return require('@/assets/img/ic_toggler.png');
+			}
+			return require('@/assets/img/ic_close.png');
+		},
+	},
 	methods: {
 		openMaskRuleModal() {
 			this.$emit('openMaskRuleModal');
+		},
+		toggleNav() {
+			this.navOpened = !this.navOpened;
+		},
+		backToDataPanel() {
+			this.$emit('backToDataPanel');
 		},
 	},
 }

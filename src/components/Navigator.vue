@@ -35,9 +35,14 @@ export default {
 	},
 	methods: {
 		changeCurPage(page) {
+			if (this.$store.getters.rwd === 'mobile') {
+				this.$emit('closeNav');
+			}
 			if (page === '口罩怎麼買') {
 				this.$emit('openMaskRuleModal');
+				return;
 			}
+			this.$emit('backToDataPanel');
 		},
 	},
 }

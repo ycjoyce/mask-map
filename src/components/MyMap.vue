@@ -21,6 +21,14 @@ export default {
       type: Array,
       required: false,
     },
+    reRender: {
+			type: Boolean,
+			required: true,
+    },
+    backToUserPos: {
+			type: Number,
+			required: false,
+		},
 	},
   data() {
     return {
@@ -42,14 +50,16 @@ export default {
       }
       navigator.geolocation.getCurrentPosition(this.successGPS, this.errorGPS);
     },
-    successGPS(position) {
+    setUserPos(position) {
       let curPos = [
         position.coords.latitude,
         position.coords.longitude,
       ];
       this.center = curPos;
       this.$store.commit('setUserCurPos', curPos);
-
+    },
+    successGPS(position) {
+      this.setUserPos(position);
       this.initMap();
     },
     errorGPS() {
@@ -190,7 +200,8 @@ export default {
         marker.on('click', (e) => {
           let { lat, lng } = e.latlng;
           let coords = [lat, lng];
-          this.map.flyTo(coords);
+          this.center = coords;
+          this.map.flyTo(this.center);
         });
 
         if (
@@ -231,6 +242,10 @@ export default {
       }
     },
     '$store.state.checkedPharmacy': function(val) {
+      if (!val) {
+        return;
+      }
+
       let targetPharmacy = this.allPharmacyData.find((pharmacy) => pharmacy.properties.id === val);
       let coords = targetPharmacy.geometry.coordinates;
 
@@ -238,8 +253,19 @@ export default {
         [coords[0], coords[1]] = [coords[1], coords[0]];
       }
 
-      this.map.flyTo(coords);
+      this.center = coords;
+      this.map.flyTo(this.center);
       this.flyByCheckedPharmacy = val;
+    },
+    reRender(val, oldVal) {
+      if (!oldVal && val) {
+        this.map.invalidateSize();
+      }
+    },
+    backToUserPos() {
+      navigator.geolocation.getCurrentPosition(this.setUserPos);
+      this.center = this.$store.state.userCurPos;
+      this.map.flyTo(this.center);
     },
   },
   mounted() {

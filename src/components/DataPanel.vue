@@ -1,5 +1,7 @@
 <template>
-  <aside class="data-panel">
+  <aside
+    class="data-panel"
+  >
     <modal
       v-show="ruleModal"
       @closeModal="toggleRuleModal"
@@ -38,6 +40,12 @@
     >
       查看更多
     </button>
+
+    <button
+      class="btn btn-solid-white corner-circle box-sdw locate-cur-pos"
+      @click="backToUserPos"
+      v-show="$store.getters.rwd !== 'mobile'"
+    ></button>
   </aside>
 </template>
 
@@ -78,6 +86,7 @@ export default {
       filteredByInput: [],
       disabled: true,
       searchCondition: null,
+      locateBtnLeft: 0,
     };
   },
   computed: {
@@ -237,9 +246,12 @@ export default {
       this.pharmacyToShow = this.pharmacyFiltered.slice(0, this.pharmacyShowedAmt);
 
       if (this.pharmacyToShow.length < 1) {
-        word = `查無「${word}」`;
+        word = `查無${word}`;
       }
       this.dataDetailRange = word;      
+    },
+    backToUserPos() {
+      this.$emit('backToUserPos');
     },
   },
   watch: {

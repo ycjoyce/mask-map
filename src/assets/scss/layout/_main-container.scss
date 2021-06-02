@@ -7,5 +7,9 @@
 }
 
 .map-panel {
-    flex: 2;
+    flex: 3;
+
+    @include rwd(pad) {
+        flex: 2;
+    }
 }

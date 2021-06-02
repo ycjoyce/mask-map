@@ -17,4 +17,24 @@
             border-radius: 6px 6px 0 0;
         }
     }
+
+    @include rwd(mobile) {
+        display: block;
+        color: #fff !important;
+        text-align: center;
+
+        &.active {
+            background-color: #485b6e;
+            &::after {
+                display: none;
+            }
+        }
+    }
+}
+
+.header-nav {
+    @include rwd(mobile) {
+        width: 100%;
+        background-color: map-get($theme-color, pmr);
+    }
 }

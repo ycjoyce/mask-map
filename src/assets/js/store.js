@@ -13,6 +13,18 @@ const store = new Vuex.Store({
 		userCurPos: null,
 		checkedPharmacy: null,
 		mapMounted: false,
+		windowWidth: window.innerWidth,
+	},
+	getters: {
+		rwd(state) {
+			if (state.windowWidth > 1199) {
+				return 'pc';
+			}
+			if (state.windowWidth > 768 && state.windowWidth < 1200) {
+				return 'pad';
+			}
+			return 'mobile';
+		},
 	},
 	mutations: {
 		refreshList(state, data) {
@@ -29,6 +41,9 @@ const store = new Vuex.Store({
 		},
 		setMapMounted(state) {
 			state.mapMounted = true;
+		},
+		getWindowWidth(state, width) {
+			state.windowWidth = width;
 		},
 	},
 });

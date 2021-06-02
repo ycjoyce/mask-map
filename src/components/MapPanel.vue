@@ -11,6 +11,8 @@
     <my-map 
 			@getMapMsg="toggleModal"
 			:allPharmacyData="allPharmacyData"
+			:reRender="reRender"
+			:backToUserPos="backToUserPos"
 		/>
 
 		<my-footer/>
@@ -32,7 +34,15 @@ export default {
 		allPharmacyData: {
       type: Array,
       required: false,
-    },
+		},
+		reRender: {
+			type: Boolean,
+			required: true,
+		},
+		backToUserPos: {
+			type: Number,
+			required: false,
+		},
 	},
 	data() {
 		return {

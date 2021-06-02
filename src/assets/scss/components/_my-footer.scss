@@ -11,6 +11,10 @@
         &:last-child {
             padding-right: 0;
         }
+
+        @include rwd(mobile) {
+            color: #fff;
+        }
     }
 }
 
@@ -20,5 +24,16 @@
     
     >*:not(:last-child) {
         margin-bottom: 10px;
+    }
+
+    @include rwd(mobile) {
+        background-color: map-get($theme-color, pmr);
+        text-align: left;
+    }
+}
+
+.footer-thanks {
+    @include rwd(mobile) {
+        color: #fff;
     }
 }

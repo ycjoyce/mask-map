@@ -14,7 +14,7 @@
 		</ul>
 
 		<button
-			class="btn btn-border-pmr corner-round-lg"
+			class="btn btn-border-pmr corner-round-lg data-detail-refresh"
 			@click="refreshList"
 			:disabled="disabled"
 		>
