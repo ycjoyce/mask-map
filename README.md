@@ -1,24 +1,62 @@
-# mask-map
+# 口罩即時查 口罩地圖網站
+基於 Vue.js 建立的口罩地圖網站，以 Vuex 管理狀態，地圖採用 Leaflet.js。UI 皆以 SCSS 遵循 OOCSS 手刻而成，並支援 RWD。
 
-## Project setup
-```
-npm install
-```
+## 線上演示
+[Demo](https://ycjoyce.github.io/mask-map/)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 功能地圖
+1. 藥局列表
+- 可以看到目前所在位置距離5公里的所有藥局（依遠近順序排列）
+- 可以輸入地址或區域搜尋藥局
+- 輸入關鍵字時可以看見符合關鍵字的推薦選項
+- 點擊推薦選項可以將該選項帶入搜尋框
+- 點擊「搜尋」可以篩選出符合搜尋條件的藥局
+- 可以重整藥局列表
+- 可以查看購買規則
+- 可以查看藥局詳細資訊，例如該藥局口罩剩餘量（成人、兒童）、店名、距離、營業狀態、地址、電話、備註
+- 藥局口罩剩餘量可以依據數量顯示不同狀態顏色（充足、低庫存、無庫存）
+- 可以點擊「於地圖查看」，跳轉地圖至該藥局，並顯示藥局詳細內容跳窗
+- 可以點擊「撥打電話」撥打藥局電話
+- 可以點擊「查看更多」載入更多符合條件的藥局
+- 可以點擊定位按鈕，跳轉地圖至使用者所在位置
 
-### Compiles and minifies for production
-```
-npm run build
-```
+2. 地圖
+- 若無法取得使用者位置，可以自動定位至預設地點
+- 可以顯示藥局的地圖圖標
+- 地圖圖標可以依據該藥局營業狀態顯示不同顏色
+- 點擊地圖圖標可以顯示藥局詳細內容跳窗，顯示藥局口罩剩餘量（成人、兒童）、店名、距離、營業狀態
 
-### Lints and fixes files
-```
-npm run lint
-```
+3. 導航列
+- 可以點擊「口罩怎麼買」查看相關規定及連結
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 使用技術
+- Vue.js / Vue Cli / Vuex
+- Javascript (ES6+)
+- Leaflet.js
+- OOCSS
+- SCSS
+- ESLint (Airbnb)
+
+## 應用介面
+- 藥局列表及地圖
+![藥局列表及地圖](https://i.imgur.com/Ofk8T1R.png)
+
+- 藥局列表 - 篩選符合關鍵字的推薦選項
+![藥局列表 - 篩選符合關鍵字的推薦選項](https://i.imgur.com/P2BJe5E.png)
+
+- 藥局列表 - 查看購買規則
+![藥局列表 - 查看購買規則](https://i.imgur.com/nkLGuKZ.png)
+
+- 藥局列表 - 點擊「查看更多」載入更多符合條件的藥局
+![藥局列表 - 點擊「查看更多」載入更多符合條件的藥局](https://i.imgur.com/jKWi8qE.png)
+
+- 地圖  - 點擊地圖圖標顯示藥局詳細內容跳窗
+![地圖 - 點擊地圖圖標顯示藥局詳細內容跳窗](https://i.imgur.com/30tPGVi.png)
+
+- 導航列 - 點擊「口罩怎麼買」查看相關規定及連結
+![導航列 - 點擊「口罩怎麼買」查看相關規定及連結](https://i.imgur.com/Mpv54wF.png)
+
+## 聲明
+- 介接 API 來自 The F2E 2nd
+- UI 設計圖稿來自 The F2E 2nd（設計師：PY）
+- 本作品內圖片、內容等，純粹為個人練習使用，不做任何商業用途
