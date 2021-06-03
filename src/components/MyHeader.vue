@@ -31,6 +31,7 @@
 			@backToDataPanel="backToDataPanel"
 			@closeNav="navOpened = false"
 			:curPage="curPage"
+			:navTargets="navTargets"
 			v-show="$store.getters.rwd !== 'mobile' || navOpened"
 		/>
 	</header>
@@ -52,6 +53,9 @@ export default {
 	data() {
 		return {
 			navOpened: false,
+			navTargets: [
+				'口罩供給現況', '口罩怎麼買'
+			],
 		};
 	},
 	computed: {

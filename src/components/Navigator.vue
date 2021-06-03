@@ -25,13 +25,10 @@ export default {
 			type: String,
 			required: true,
 		},
-	},
-	data() {
-		return {
-			navTargets: [
-				'口罩供給現況', '口罩怎麼買'
-			],
-		};
+		navTargets: {
+			type: Array,
+			required: true,
+		},
 	},
 	methods: {
 		changeCurPage(page) {
