@@ -19,10 +19,7 @@ export default {
 	props: {
 		ableToClose: {
 			type: Boolean,
-			required: false,
-			default() {
-				return true;
-			},
+			default: true,
 		},
 	},
 	methods: {
@@ -30,5 +27,5 @@ export default {
 			this.$emit('closeModal', false);
 		},
 	},
-}
+};
 </script>

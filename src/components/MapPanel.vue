@@ -3,16 +3,16 @@
 		<modal
 			v-show="modalMsg"
 			@closeModal="toggleModal"
-			:ableToClose="ableToClose"
+			:able-to-close="ableToClose"
 		>
 			{{modalMsg}}
 		</modal>
 
     <my-map 
 			@getMapMsg="toggleModal"
-			:allPharmacyData="allPharmacyData"
-			:reRender="reRender"
-			:backToUserPos="backToUserPos"
+			:all-pharmacy-data="allPharmacyData"
+			:re-render="reRender"
+			:back-to-user-pos="backToUserPos"
 		/>
 
 		<my-footer/>
@@ -59,5 +59,5 @@ export default {
 			}
 		},
 	},
-}
+};
 </script>

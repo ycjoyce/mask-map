@@ -45,8 +45,11 @@ export default {
 	},
 	created() {
 		for (let type in this.maskAmt) {
+			if (!{}.hasOwnProperty.call(this.maskAmt, type)) {
+				continue;
+			}
 			this.totalMask += this.maskAmt[type];
 		}
 	},
-}
+};
 </script>

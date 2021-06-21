@@ -2,8 +2,8 @@
   <nav class="header-nav">
     <ul class="nav-target-box">
 			<li
-				v-for="(target, targetIdx) in navTargets"
-				:key="`target-${targetIdx}`"
+				v-for="target in navTargets"
+				:key="target"
 				:class="[
 					'nav-target',
 					'title-ttr',
@@ -35,12 +35,8 @@ export default {
 			if (this.$store.getters.rwd === 'mobile') {
 				this.$emit('closeNav');
 			}
-			if (page === '口罩怎麼買') {
-				this.$emit('openMaskRuleModal');
-				return;
-			}
-			this.$emit('backToDataPanel');
+			this.$emit('changeCurPage', page);
 		},
 	},
-}
+};
 </script>

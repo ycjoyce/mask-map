@@ -12,7 +12,7 @@
 			>
 
 			<result-list 
-				:filteredData="filteredData"
+				:filtered-data="filteredData"
 				v-show="filteredData.length > 0 && !hideResultList"
 				@chooseLocation="chooseLocation"
 			/>
@@ -71,6 +71,9 @@ export default {
 		chooseLocation(location) {
 			let word = '';
 			for (let key in location) {
+				if (!{}.hasOwnProperty.call(location, key)) {
+					continue;
+				}
 				word += location[key];
 			}
 			this.hideResultList = true;
@@ -92,5 +95,5 @@ export default {
 			});
 		},
 	},
-}
+};
 </script>

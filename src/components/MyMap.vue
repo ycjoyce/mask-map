@@ -271,7 +271,7 @@ export default {
   mounted() {
     this.toggleModal('地圖資料讀取中請稍候');
   },
-}
+};
 </script>
 
 <style lang="scss">

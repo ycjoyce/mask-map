@@ -29,9 +29,9 @@
 
 		<my-header
 			ref="my-header"
-			@openMaskRuleModal="toggleMaskRuleModal(true)"
-			@backToDataPanel="backToDataPanel"
-			:curPage="curPage"
+			:cur-page="curPage"
+			:nav-targets="Object.values(navTargets)"
+			@changeCurPage="handleChangePage"
 		/>
 
 		<div
@@ -41,16 +41,16 @@
 			}"
 		>
 			<data-panel
+				v-show="$store.getters.rwd !== 'mobile' || panelChecked !== 'map-panel'"
 				:all-pharmacy-data="allPharmacyData"
 				@backToUserPos="backToUserPos = Date.now()"
-				v-show="$store.getters.rwd !== 'mobile' || panelChecked !== 'map-panel'"
 			/>
 
 			<map-panel
-				:all-pharmacy-data="allPharmacyData"
-				:reRender="reRenderMap"
-				:backToUserPos="backToUserPos"
 				v-show="$store.getters.rwd !== 'mobile' || panelChecked === 'map-panel'"
+				:all-pharmacy-data="allPharmacyData"
+				:re-render="reRenderMap"
+				:back-to-user-pos="backToUserPos"
 			/>
 		</div>
 	</div>
@@ -76,10 +76,14 @@ export default {
 			allPharmacyData: null,
 			headerHeight: 0,
 			showMaskRuleModal: false,
-			curPage: '口罩供給現況',
+			curPage: '',
 			panelChecked: 'data-panel',
 			reRenderMap: false,
 			backToUserPos: null,
+			navTargets: {
+				index: '口罩供給現況',
+				openModal: '口罩怎麼買',
+			},
 		};
 	},
 	methods: {
@@ -99,19 +103,31 @@ export default {
 
 				this.$store.commit('refreshList', { 
 					click: false,
-					time: Date.now()
+					time: Date.now(),
 				});
 			});
 		},
 		toggleMaskRuleModal(status) {
 			this.showMaskRuleModal = status;
-			this.curPage = status ? '口罩怎麼買' : '口罩供給現況';
+			if (!status) {
+				this.curPage = this.navTargets.index;
+			}
 		},
 		getWindowWidth() {
+			this.headerHeight = this.getHeaderHeight();
 			this.$store.commit('getWindowWidth', window.innerWidth);
 		},
-		backToDataPanel() {
-			this.$store.commit('setCheckedPharmacy', null);
+		handleChangePage(page) {
+			const targetKey = Object.keys(this.navTargets).find((key) => this.navTargets[key] === page);
+			if (!targetKey) {
+				return;
+			}
+			if (targetKey === 'openModal') {
+				this.toggleMaskRuleModal(true)
+			} else if (targetKey === 'index') {
+				this.$store.commit('setCheckedPharmacy', null);
+			}
+			this.curPage = this.navTargets[targetKey];
 		},
 	},
 	watch: {
@@ -133,15 +149,16 @@ export default {
 	},
 	created() {
 		this.fetchDataFromApi();
+		this.curPage = this.navTargets.index;
 	},
 	mounted() {
-		this.headerHeight = this.getHeaderHeight();
+		this.getWindowWidth();
 		window.addEventListener('resize', this.getWindowWidth);
 	},
 	beforeDestroy() {
 		window.removeEventListener('resize', this.getWindowWidth);
 	},
-}
+};
 </script>
 
 <style lang="scss">

@@ -38,5 +38,5 @@ export default {
 			ageTypes: ['adult', 'child'],
 		};
 	},
-}
+};
 </script>

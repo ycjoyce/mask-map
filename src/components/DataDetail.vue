@@ -47,8 +47,8 @@ export default {
 		formattedTime() {
 			return (time) => {
 				return new Date(time).toLocaleTimeString();
-			}
+			};
 		},
 	},
-}
+};
 </script>

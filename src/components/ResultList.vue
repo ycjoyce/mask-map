@@ -1,8 +1,8 @@
 <template>
   <ul class="result-list">
     <li
-      v-for="(location, index) in filteredData"
-      :key="index"
+      v-for="location in filteredData"
+      :key="`${location.county}-${location.town}-${location.cunli}`"
       class="result-list-item"
       @click="chooseLocation(location)"
     >
@@ -41,5 +41,5 @@ export default {
       this.$emit('chooseLocation', location);
     },
   },
-}
+};
 </script>

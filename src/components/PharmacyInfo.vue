@@ -14,7 +14,8 @@
 					'pharmacy-status',
 					'text-sm',
 					`text-bg-${availableStatus(pharmacyInfo)}`,
-					'corner-round-sm']"
+					'corner-round-sm'
+				]"
 			>
 				{{availableStatusMap[availableStatus(pharmacyInfo)]}}
 			</span>
@@ -86,7 +87,7 @@ export default {
 				let dist = phone.split(')').shift().substr(2);
 				let num = phone.split(')').pop();
 				return `+886-${dist}-${num}`;
-			}
+			};
 		},
 	},
 	methods: {
@@ -94,5 +95,5 @@ export default {
 			this.$store.commit('setCheckedPharmacy', this.pharmacyInfo.id);
 		},
 	},
-}
+};
 </script>

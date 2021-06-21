@@ -23,15 +23,7 @@
 export default {
 	data() {
 		return {
-			availableMap: {
-				0: '全民',
-				1: '奇數',
-				2: '偶數',
-				3: '奇數',
-				4: '偶數',
-				5: '奇數',
-				6: '偶數',
-			}
+			availableMap: {},
 		};
 	},
 	computed: {
@@ -44,5 +36,18 @@ export default {
 			this.$emit('openRuleModal', true);
 		},
 	},
-}
+	created() {
+		for (let i = 0; i < 7; i++) {
+			if (i === 0) {
+				this.availableMap[i] = '全民';
+				continue;
+			}
+			if (i % 2 === 0) {
+				this.availableMap[i] = '偶數';
+				continue;
+			}
+			this.availableMap[i] = '奇數';
+		}
+	},
+};
 </script>

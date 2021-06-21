@@ -18,21 +18,20 @@
 			</h1>
 
 			<input
+				v-show="$store.getters.rwd === 'mobile'"
 				type="image"
 				:src="navTogglerImg"
 				class="nav-toggler btn"
-				v-show="$store.getters.rwd === 'mobile'"
 				@click="toggleNav"
 			>
 		</div>
 
 		<navigator
-			@openMaskRuleModal="openMaskRuleModal"
-			@backToDataPanel="backToDataPanel"
-			@closeNav="navOpened = false"
-			:curPage="curPage"
-			:navTargets="navTargets"
 			v-show="$store.getters.rwd !== 'mobile' || navOpened"
+			:cur-page="curPage"
+			:nav-targets="navTargets"
+			@changeCurPage="changeCurPage"
+			@closeNav="navOpened = false"
 		/>
 	</header>
 </template>
@@ -46,6 +45,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		navTargets: {
+			type: Array,
+			required: true,
+		},
 	},
 	components: {
 		Navigator,
@@ -53,29 +56,21 @@ export default {
 	data() {
 		return {
 			navOpened: false,
-			navTargets: [
-				'口罩供給現況', '口罩怎麼買'
-			],
 		};
 	},
 	computed: {
 		navTogglerImg() {
-			if (!this.navOpened) {
-				return require('@/assets/img/ic_toggler.png');
-			}
-			return require('@/assets/img/ic_close.png');
+			const status = !this.navOpened ? 'toggler' : 'close';
+			return require(`@/assets/img/ic_${status}.png`);
 		},
 	},
 	methods: {
-		openMaskRuleModal() {
-			this.$emit('openMaskRuleModal');
-		},
 		toggleNav() {
 			this.navOpened = !this.navOpened;
 		},
-		backToDataPanel() {
-			this.$emit('backToDataPanel');
+		changeCurPage(page) {
+			this.$emit('changeCurPage', page);
 		},
 	},
-}
+};
 </script>

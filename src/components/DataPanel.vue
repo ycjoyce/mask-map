@@ -12,10 +12,10 @@
     </modal>
 
     <search-bar
-      @inputVal="handleInputVal"
-      @chooseLocation="chooseLocation"
       :disabled="disabled"
-      :filteredData="filteredByInput"
+      :filtered-data="filteredByInput"
+      @inputVal="handleInputVal"
+      @chooseLocation="chooseLocation"    
     />
 
     <available-cal
@@ -35,16 +35,16 @@
 
     <button
       class="btn btn-solid-pmr corner-round-lg title-ttr box-sdw load-more-data"
-      @click="showMore"
       :disabled="showMoreDisabled"
+      @click="showMore"
     >
       查看更多
     </button>
 
     <button
+      v-show="$store.getters.rwd !== 'mobile'"
       class="btn btn-solid-white corner-circle box-sdw locate-cur-pos"
       @click="backToUserPos"
-      v-show="$store.getters.rwd !== 'mobile'"
     ></button>
   </aside>
 </template>
@@ -140,6 +140,9 @@ export default {
       let allFiltered = this.townMap.filter((location) => {
         let exist = {};
         for (let key in location) {
+          if (!{}.hasOwnProperty.call(location, key)) {
+            continue;
+          }
           keys.push(key);
           exist[key] = val.includes(location[key]) || location[key].includes(val);
         }
@@ -192,6 +195,9 @@ export default {
       let result = [];
 
       for (let res in filteredReduce) {
+        if (!{}.hasOwnProperty.call(filteredReduce, res)) {
+          continue;
+        }
         result = result.concat(filteredReduce[res]);
       }
 
@@ -239,6 +245,9 @@ export default {
           return condition;
         });
         for (let key in location) {
+          if (!{}.hasOwnProperty.call(location, key)) {
+            continue;
+          }
           word += location[key];        
         }
       }
@@ -281,5 +290,5 @@ export default {
   created() {
     this.dataDetailRange = `距離附近 ${this.range}公里 以內`;
   },
-}
+};
 </script>
