@@ -88,7 +88,7 @@ export default {
       
       await this.initPoints();
       await this.getPoints();
-      this.drawMarkers();
+      await this.drawMarkers();
       this.toggleModal(false);
       this.$store.commit('setMapMounted');
 
@@ -113,11 +113,18 @@ export default {
         getDistance(point.coords, this.center) <= this.distanceArange
       ));
     },
-    drawMarkers() {
-      let finished = false;
-      
+    async drawMarkers() {
       let amtBoxTemplate = (status, point) => {
-        let ageTypes = [{'adult': '成人'}, {'child': '兒童'}];
+        let ageTypes = [
+          {
+            en: 'adult',
+            ch: '成人',
+          },
+          {
+            en: 'child',
+            ch: '兒童',
+          }
+        ];
         let amtBoxTemplate = `
           <div class="pharmacy-title ${status}">
             <p class="text-color-pmr text-bold title-ttr">
@@ -132,12 +139,11 @@ export default {
           </div>
           <div class="amt-box-container">
         `;
-        let totalMask = 0;
+        let totalMask = point.properties['mask_adult'] + point.properties['mask_child'];
 
         for (let ageType of ageTypes) {
-          let key = Object.keys(ageType)[0];
-          let val = Object.values(ageType)[0];
-          totalMask += point.properties[`mask_${key}`];
+          let key = ageType.en;
+          let val = ageType.ch;
 
           amtBoxTemplate += `
             <div
@@ -156,25 +162,20 @@ export default {
           `;
         }
         amtBoxTemplate += '</div>';
-
         return amtBoxTemplate;
       };
-      
-      this.points.forEach(async (point, index, arr) => {
-        let timer;
+      let setMarker = async (point) => {
         let getStatus = () => {
           return new Promise((resolve) => {
-            timer = setInterval(() => {
-              let status = this.availableStatus(point.properties);
-              if (status) {
-                resolve(status);
-              }
-            }, 50);
+            let status = false;
+            while (!status) {
+              status = this.availableStatus(point.properties);
+            }
+            resolve(status);
           });
         };
 
         let status = await getStatus();
-        clearInterval(timer);
         
         let customIcon = L.icon({
           iconUrl: require(`@/assets/img/ic_point_${status}.png`),
@@ -204,34 +205,53 @@ export default {
           this.map.flyTo(this.center);
         });
 
-        if (
-          (this.flyByCheckedPharmacy && marker._pharmacyId === this.flyByCheckedPharmacy) ||
-          (!this.flyByCheckedPharmacy && index === arr.length - 1)
-        ) {
-          finished = true;
+        return marker;
+      };
+      
+      let paintPoints = async () => {
+        let finishedMakeMarker = false;
+        for (let i = 0; i < this.points.length; i++) {
+          let point = this.points[i];
+          let marker = await setMarker(point);
+          if ( marker._pharmacyId === this.flyByCheckedPharmacy ) {
+            break;
+          }
         }
-      });
+        finishedMakeMarker = true;
+        return new Promise((resolve) => {
+          let timer = setInterval(() => {
+            if (finishedMakeMarker) {
+              clearInterval(timer);
+              resolve(true);
+            }
+          }, 0);
+        });
+      };
+
+      let finished = this.points.length < 1 || await paintPoints();
 
       return new Promise((resolve) => {
-        let parentTimer = setInterval(() => {
+        const timer = setInterval(() => {
           if (finished) {
-            clearInterval(parentTimer);
-            resolve();
+            clearInterval(timer);
+            resolve(this.markers);
           }
-        }, 50);
+        }, 0);
       });
     },
     async handleMapMove() {
       const { lat, lng } = this.map.getCenter();
       this.center = [lat, lng];
-
       await this.getPoints();
       await this.drawMarkers();
-      if (this.flyByCheckedPharmacy) {
-        this.markers.find((marker) => (
-          marker._pharmacyId === this.flyByCheckedPharmacy
-        )).openPopup();
+      const targetMarker = this.markers.find((marker) => (
+        marker._pharmacyId === this.flyByCheckedPharmacy
+      ));
+
+      if (targetMarker) {
+        targetMarker.openPopup();
       }
+
       this.flyByCheckedPharmacy = false;
     },
   },
