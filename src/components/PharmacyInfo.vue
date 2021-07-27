@@ -56,8 +56,8 @@
 </template>
 
 <script>
-import getAvailableStatus from '@/assets/js/getAvailableStatus';
-import calDistance from '@/assets/js/calDistance';
+import getAvailableStatus from '@/mixins/getAvailableStatus';
+import calDistance from '@/mixins/calDistance';
 
 export default {
 	mixins: [

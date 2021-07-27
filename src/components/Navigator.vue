@@ -2,17 +2,17 @@
   <nav class="header-nav">
     <ul class="nav-target-box">
 			<li
-				v-for="target in navTargets"
-				:key="target"
+				v-for="[key, val] in Object.entries(navTargets)"
+				:key="key"
 				:class="[
 					'nav-target',
 					'title-ttr',
 					'text-color-pmr',
-					{ active: target === curPage }
+					{ active: key === curPage }
 				]"
-				@click="changeCurPage(target)"
+				@click="changeCurPage(key)"
 			>
-				{{target}}
+				{{val}}
 			</li>
 		</ul>
   </nav>
@@ -26,7 +26,7 @@ export default {
 			required: true,
 		},
 		navTargets: {
-			type: Array,
+			type: Object,
 			required: true,
 		},
 	},

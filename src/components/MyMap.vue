@@ -1,15 +1,12 @@
 <template>
-  <div
-    id="map"
-    class="map"
-  ></div>
+  <div id="map" class="map"></div>
 </template>
 
 <script>
 import L from 'leaflet';
-import { getDistance } from '@/assets/js/util';
-import getAvailableStatus from '@/assets/js/getAvailableStatus';
-import calDistance from '@/assets/js/calDistance';
+import { getDistance } from '@/util';
+import getAvailableStatus from '@/mixins/getAvailableStatus';
+import calDistance from '@/mixins/calDistance';
 
 export default {
   mixins: [

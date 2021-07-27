@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import getAvailableStatus from '@/assets/js/getAvailableStatus';
+import getAvailableStatus from '@/mixins/getAvailableStatus';
 
 export default {
 	mixins: [getAvailableStatus],

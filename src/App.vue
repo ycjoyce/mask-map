@@ -27,12 +27,7 @@
 			</a>
 		</modal>
 
-		<my-header
-			ref="my-header"
-			:cur-page="curPage"
-			:nav-targets="Object.values(navTargets)"
-			@changeCurPage="handleChangePage"
-		/>
+		<my-header ref="my-header" />
 
 		<div
 			class="main-container"
@@ -42,13 +37,13 @@
 		>
 			<data-panel
 				v-show="$store.getters.rwd !== 'mobile' || panelChecked !== 'map-panel'"
-				:all-pharmacy-data="allPharmacyData"
+				:all-pharmacy-data="$store.state.maskData"
 				@backToUserPos="backToUserPos = Date.now()"
 			/>
 
 			<map-panel
 				v-show="$store.getters.rwd !== 'mobile' || panelChecked === 'map-panel'"
-				:all-pharmacy-data="allPharmacyData"
+				:all-pharmacy-data="$store.state.maskData"
 				:re-render="reRenderMap"
 				:back-to-user-pos="backToUserPos"
 			/>
@@ -61,7 +56,9 @@ import Modal from '@/components/Modal.vue';
 import MyHeader from '@/components/MyHeader.vue';
 import DataPanel from '@/components/DataPanel.vue';
 import MapPanel from '@/components/MapPanel.vue';
-import fetchData from '@/assets/js/fetch';
+import { FETCH_MASK_DATA } from '@/types';
+import { SET_CUR_PAGE } from '@/types';
+import { pages } from '@/util';
 
 export default {
 	name: 'App',
@@ -73,61 +70,53 @@ export default {
 	},
 	data() {
 		return {
-			allPharmacyData: null,
 			headerHeight: 0,
 			showMaskRuleModal: false,
-			curPage: '',
 			panelChecked: 'data-panel',
 			reRenderMap: false,
 			backToUserPos: null,
-			navTargets: {
-				index: '口罩供給現況',
-				openModal: '口罩怎麼買',
-			},
 		};
 	},
 	methods: {
-		getHeaderHeight() {
-			const headerEl = this.$refs['my-header']['$el'];
-			return headerEl.offsetHeight;
+		getElData() {
+			this.headerHeight = this.$refs['my-header']['$el'].offsetHeight;
+			this.$store.commit('getWindowWidth', window.innerWidth);
 		},
-		fetchDataFromApi() {
-			fetchData(
-				process.env.VUE_APP_API_ADDRESS
-			).then((res) => {
-				this.allPharmacyData = res.features;
+		fetchMaskData() {
+			this.$store.dispatch(
+				'maskActions',
+				{ type: FETCH_MASK_DATA }
+			);
 
-				if (this.$store.state.refreshListTime.time) {
-					return;
-				}
-
-				this.$store.commit('refreshList', { 
-					click: false,
-					time: Date.now(),
-				});
+			if (this.$store.state.refreshListTime.time) {
+				return;
+			}
+			this.$store.commit('refreshList', { 
+				click: false,
+				time: Date.now(),
 			});
 		},
 		toggleMaskRuleModal(status) {
 			this.showMaskRuleModal = status;
 			if (!status) {
-				this.curPage = this.navTargets.index;
+				this.$store.dispatch(
+					'pageActions',
+					{ type: SET_CUR_PAGE, payload: 'index' }
+				);
 			}
 		},
-		getWindowWidth() {
-			this.headerHeight = this.getHeaderHeight();
-			this.$store.commit('getWindowWidth', window.innerWidth);
-		},
-		handleChangePage(page) {
-			const targetKey = Object.keys(this.navTargets).find((key) => this.navTargets[key] === page);
-			if (!targetKey) {
-				return;
+		onPageChange(page) {
+			const [index, openModal] = Object.keys(pages);
+			switch (page) {
+				case index:
+					this.$store.commit('setCheckedPharmacy', null);
+					break;
+				case openModal:
+					this.toggleMaskRuleModal(true);
+					break;
+				default:
+					break;
 			}
-			if (targetKey === 'openModal') {
-				this.toggleMaskRuleModal(true)
-			} else if (targetKey === 'index') {
-				this.$store.commit('setCheckedPharmacy', null);
-			}
-			this.curPage = this.navTargets[targetKey];
 		},
 	},
 	watch: {
@@ -135,8 +124,7 @@ export default {
 			if (!click || !time) {
 				return;
 			}
-
-			this.fetchDataFromApi();
+			this.fetchMaskData();
 		},
 		'$store.state.checkedPharmacy': function(val) {
 			if (!val) {
@@ -146,21 +134,23 @@ export default {
 			this.panelChecked = 'map-panel';
 			this.reRenderMap = true;
 		},
+		'$store.state.curPage': function(page) {
+			this.onPageChange(page);
+		},
 	},
 	created() {
-		this.fetchDataFromApi();
-		this.curPage = this.navTargets.index;
+		this.fetchMaskData();
 	},
 	mounted() {
-		this.getWindowWidth();
-		window.addEventListener('resize', this.getWindowWidth);
+		this.getElData();
+		window.addEventListener('resize', this.getElData);
 	},
 	beforeDestroy() {
-		window.removeEventListener('resize', this.getWindowWidth);
+		window.removeEventListener('resize', this.getElData);
 	},
 };
 </script>
 
 <style lang="scss">
-	@import '@/assets/scss/all.scss';
+	@import '@/styles/all.scss';
 </style>

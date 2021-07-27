@@ -22,14 +22,14 @@
 				type="image"
 				:src="navTogglerImg"
 				class="nav-toggler btn"
-				@click="toggleNav"
+				@click="navOpened = !navOpened"
 			>
 		</div>
 
 		<navigator
 			v-show="$store.getters.rwd !== 'mobile' || navOpened"
-			:cur-page="curPage"
-			:nav-targets="navTargets"
+			:nav-targets="pages"
+			:cur-page="$store.state.curPage"
 			@changeCurPage="changeCurPage"
 			@closeNav="navOpened = false"
 		/>
@@ -38,23 +38,16 @@
 
 <script>
 import Navigator from '@/components/Navigator.vue';
+import { pages } from '@/util';
+import { SET_CUR_PAGE } from '@/types';
 
 export default {
-	props: {
-		curPage: {
-			type: String,
-			required: true,
-		},
-		navTargets: {
-			type: Array,
-			required: true,
-		},
-	},
 	components: {
 		Navigator,
 	},
 	data() {
 		return {
+			pages,
 			navOpened: false,
 		};
 	},
@@ -65,11 +58,11 @@ export default {
 		},
 	},
 	methods: {
-		toggleNav() {
-			this.navOpened = !this.navOpened;
-		},
 		changeCurPage(page) {
-			this.$emit('changeCurPage', page);
+			this.$store.dispatch(
+				'pageActions',
+				{ type: SET_CUR_PAGE, payload: page }
+			);
 		},
 	},
 };

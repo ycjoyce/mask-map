@@ -1,4 +1,4 @@
-import { getDistance } from '@/assets/js/util';
+import { getDistance } from '@/util';
 
 export default {
 	computed: {

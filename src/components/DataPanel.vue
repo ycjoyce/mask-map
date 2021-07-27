@@ -55,7 +55,7 @@ import SearchBar from '@/components/SearchBar.vue';
 import AvailableCal from '@/components/AvailableCal.vue';
 import DataDetail from '@/components/DataDetail.vue';
 import PharmacyCard from '@/components/PharmacyCard.vue';
-import calDistance from '@/assets/js/calDistance';
+import calDistance from '@/mixins/calDistance';
 
 export default {
   mixins: [calDistance],
@@ -74,9 +74,9 @@ export default {
   },
   data() {
     return {
+      ruleModal: false,
       pharmacyStartIdx: 0,
       pharmacyShowedAmt: 20,
-      ruleModal: false,
       pharmacyToShow: [],
       pharmacyFiltered: [],
       pharmacySorted: [],
