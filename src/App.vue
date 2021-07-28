@@ -37,7 +37,6 @@
 		>
 			<data-panel
 				v-show="$store.getters.rwd !== 'mobile' || panelChecked !== 'map-panel'"
-				:all-pharmacy-data="$store.state.maskData"
 				@backToUserPos="backToUserPos = Date.now()"
 			/>
 
@@ -57,7 +56,7 @@ import MyHeader from '@/components/MyHeader.vue';
 import DataPanel from '@/components/DataPanel.vue';
 import MapPanel from '@/components/MapPanel.vue';
 import { FETCH_MASK_DATA } from '@/types';
-import { SET_CUR_PAGE } from '@/types';
+import { SET_CUR_PAGE, GET_WINDOW_WIDTH, REFRESH_LIST } from '@/types';
 import { pages } from '@/util';
 
 export default {
@@ -80,21 +79,30 @@ export default {
 	methods: {
 		getElData() {
 			this.headerHeight = this.$refs['my-header']['$el'].offsetHeight;
-			this.$store.commit('getWindowWidth', window.innerWidth);
+			this.$store.dispatch(
+				'pageActions',
+				{ type: GET_WINDOW_WIDTH, payload: window.innerWidth }
+			);
 		},
 		fetchMaskData() {
-			this.$store.dispatch(
+			const { dispatch, state } = this.$store;
+
+			dispatch(
 				'maskActions',
 				{ type: FETCH_MASK_DATA }
 			);
 
-			if (this.$store.state.refreshListTime.time) {
+			if (state.refreshList.time) {
 				return;
 			}
-			this.$store.commit('refreshList', { 
-				click: false,
-				time: Date.now(),
-			});
+			
+			dispatch(
+				'maskActions',
+				{
+					type: REFRESH_LIST,
+					payload: { click: false, time: Date.now() }
+				}
+			);
 		},
 		toggleMaskRuleModal(status) {
 			this.showMaskRuleModal = status;
@@ -120,7 +128,7 @@ export default {
 		},
 	},
 	watch: {
-		'$store.state.refreshListTime': function({ click, time }) {
+		'$store.state.refreshList': function({ click, time }) {
 			if (!click || !time) {
 				return;
 			}

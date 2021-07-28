@@ -104,7 +104,7 @@ export default {
 		},
 	},
 	watch: {
-		'$store.state.refreshListTime': function({ click, time }) {
+		'$store.state.refreshList': function({ click, time }) {
 			if (this.targetTime === time) {
 				return;
 			}

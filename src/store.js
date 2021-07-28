@@ -1,25 +1,27 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import mask from '@/apis/mask';
-import { FETCH_MASK_DATA, SET_CUR_PAGE } from '@/types';
+import {
+	FETCH_MASK_DATA,
+	SET_CUR_PAGE,
+	GET_WINDOW_WIDTH,
+	REFRESH_LIST,
+} from '@/types';
 import { pages } from '@/util';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	state: {
-		refreshListTime: {
-			click: null,
-			time: null,
-		},
-		mapCenter: [25.0457377,121.5129428],
-		userCurPos: null,
+		mapCenter: [25.0457377, 121.5129428],
 		checkedPharmacy: null,
 		mapMounted: false,
 		windowWidth: null,
 		//-----
 		maskData: null,
+		refreshList: { click: null, time: null },
 		curPage: 'index',
+		userCurPos: [25.0457377, 121.5129428], // temp
 	},
 	getters: {
 		rwd(state) {
@@ -33,9 +35,6 @@ const store = new Vuex.Store({
 		},
 	},
 	mutations: {
-		refreshList(state, data) {
-			state.refreshListTime = data;
-		},
 		setMapCenter(state, coords) {
 			state.mapCenter = coords;
 		},
@@ -61,6 +60,9 @@ const store = new Vuex.Store({
 			}
 			state.curPage = page;
 		},
+		refreshList(state, data) {
+			state.refreshList = { ...state.refreshList, ...data };
+		},
 	},
 	actions: {
 		maskActions({ commit }, action) {
@@ -73,12 +75,18 @@ const store = new Vuex.Store({
 				case FETCH_MASK_DATA:
 					fetchMaskData();
 					break;
+				case REFRESH_LIST:
+					commit('refreshList', { click: true, ...action.payload });
+					break;
 				default:
 					break;
 			}
 		},
 		pageActions({ commit }, action) {
 			switch (action.type) {
+				case GET_WINDOW_WIDTH:
+					commit('getWindowWidth', action.payload);
+					break;
 				case SET_CUR_PAGE:
 					commit('setCurPage', action.payload);
 					break;

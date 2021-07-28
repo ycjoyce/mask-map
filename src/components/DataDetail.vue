@@ -9,7 +9,7 @@
 			</li>
 
 			<li class="list-item">
-				資料更新時間 {{formattedTime($store.state.refreshListTime.time)}}
+				資料更新時間 {{formattedTime($store.state.refreshList.time)}}
 			</li>
 		</ul>
 
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { REFRESH_LIST } from '@/types';
+
 export default {
 	props: {
 		range: {
@@ -37,10 +39,13 @@ export default {
 	},
 	methods: {
 		refreshList() {
-			this.$store.commit('refreshList', {
-				click: true,
-				time: Date.now(),
-			});
+			this.$store.dispatch(
+				'maskActions',
+				{
+					type: REFRESH_LIST,
+					payload: { time: Date.now() }
+				}
+			);
 		},
 	},
 	computed: {
