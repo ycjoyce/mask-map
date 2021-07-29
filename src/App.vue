@@ -27,7 +27,11 @@
 			</a>
 		</modal>
 
-		<my-header ref="my-header" />
+		<my-header
+			ref="my-header"
+			:cur-page="curPage"
+			@onPageChange="onPageChange"
+		/>
 
 		<div
 			class="main-container"
@@ -36,15 +40,11 @@
 			}"
 		>
 			<data-panel
-				v-show="$store.getters.rwd !== 'mobile' || panelChecked !== 'map-panel'"
-				@backToUserPos="backToUserPos = Date.now()"
+				v-show="$store.getters.rwd !== 'mobile' || panelShowed === 'data'"
 			/>
 
 			<map-panel
-				v-show="$store.getters.rwd !== 'mobile' || panelChecked === 'map-panel'"
-				:all-pharmacy-data="$store.state.maskData"
-				:re-render="reRenderMap"
-				:back-to-user-pos="backToUserPos"
+				v-show="$store.getters.rwd !== 'mobile' || panelShowed === 'map'"
 			/>
 		</div>
 	</div>
@@ -55,9 +55,13 @@ import Modal from '@/components/Modal.vue';
 import MyHeader from '@/components/MyHeader.vue';
 import DataPanel from '@/components/DataPanel.vue';
 import MapPanel from '@/components/MapPanel.vue';
-import { FETCH_MASK_DATA } from '@/types';
-import { SET_CUR_PAGE, GET_WINDOW_WIDTH, REFRESH_LIST } from '@/types';
 import { pages } from '@/util';
+import {
+	FETCH_MASK_DATA,
+	GET_WINDOW_WIDTH,
+	REFRESH_LIST,
+	SET_MAP_RENDERED,
+} from '@/types';
 
 export default {
 	name: 'App',
@@ -71,9 +75,8 @@ export default {
 		return {
 			headerHeight: 0,
 			showMaskRuleModal: false,
-			panelChecked: 'data-panel',
-			reRenderMap: false,
-			backToUserPos: null,
+			panelShowed: 'data',
+			curPage: 'index',
 		};
 	},
 	methods: {
@@ -85,39 +88,26 @@ export default {
 			);
 		},
 		fetchMaskData() {
-			const { dispatch, state } = this.$store;
-
-			dispatch(
+			this.$store.dispatch(
 				'maskActions',
 				{ type: FETCH_MASK_DATA }
-			);
-
-			if (state.refreshList.time) {
-				return;
-			}
-			
-			dispatch(
-				'maskActions',
-				{
-					type: REFRESH_LIST,
-					payload: { click: false, time: Date.now() }
-				}
 			);
 		},
 		toggleMaskRuleModal(status) {
 			this.showMaskRuleModal = status;
 			if (!status) {
-				this.$store.dispatch(
-					'pageActions',
-					{ type: SET_CUR_PAGE, payload: 'index' }
-				);
+				this.curPage = 'index';
 			}
 		},
 		onPageChange(page) {
 			const [index, openModal] = Object.keys(pages);
+			this.curPage = page;
+
 			switch (page) {
 				case index:
-					this.$store.commit('setCheckedPharmacy', null);
+					if (this.$store.getters.rwd === 'mobile') {
+						this.panelShowed = 'data';
+					}
 					break;
 				case openModal:
 					this.toggleMaskRuleModal(true);
@@ -128,26 +118,34 @@ export default {
 		},
 	},
 	watch: {
-		'$store.state.refreshList': function({ click, time }) {
-			if (!click || !time) {
-				return;
-			}
+		'$store.state.refreshListTime': function() {
 			this.fetchMaskData();
 		},
+		'$store.getters.rwd': function(rwd) {
+			if (rwd === 'mobile') {
+				this.panelShowed = 'data';
+			}
+		},
 		'$store.state.checkedPharmacy': function(val) {
-			if (!val) {
-				this.panelChecked = 'data-panel';
+			if (this.$store.getters.rwd !== 'mobile') {
 				return;
 			}
-			this.panelChecked = 'map-panel';
-			this.reRenderMap = true;
-		},
-		'$store.state.curPage': function(page) {
-			this.onPageChange(page);
+			this.panelShowed = 'map';
+			if (!val) {
+				return;
+			}
+			this.$store.dispatch('mapActions', {
+				type: SET_MAP_RENDERED,
+				payload: Date.now(),
+			});
 		},
 	},
 	created() {
 		this.fetchMaskData();
+		this.$store.dispatch(
+			'maskActions',
+			{ type: REFRESH_LIST, payload: Date.now() }
+		);
 	},
 	mounted() {
 		this.getElData();

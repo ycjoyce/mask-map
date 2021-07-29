@@ -28,7 +28,7 @@ export default {
 	},
 	computed: {
 		weekday() {
-			return new Date(this.$store.state.refreshList.time).getDay();
+			return new Date(this.$store.state.refreshListTime).getDay();
 		},
 	},
 	methods: {

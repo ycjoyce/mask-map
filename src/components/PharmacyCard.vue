@@ -2,7 +2,7 @@
   <div class="pharmacy-card corner-round-sm box-sdw">
 		<div class="amt-box-container">
 			<amt-box
-				v-for="ageType in ageTypes"
+				v-for="ageType in ['adult', 'child']"
 				:key="ageType"
 				:type="ageType"
 				:maskAmt="{
@@ -32,11 +32,6 @@ export default {
 			type: Object,
 			required: true,
 		},
-	},
-	data() {
-		return {
-			ageTypes: ['adult', 'child'],
-		};
 	},
 };
 </script>

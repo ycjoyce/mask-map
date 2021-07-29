@@ -38,7 +38,7 @@
 				<button
 					class="btn text-sm text-underline text-color-basic list-item-btn"
 					v-if="detailKey === 'address'"
-					@click="checkOnMap"
+					@click="checkOnMap(pharmacyInfo.id)"
 				>
 					於地圖查看
 				</button>
@@ -58,6 +58,7 @@
 <script>
 import getAvailableStatus from '@/mixins/getAvailableStatus';
 import calDistance from '@/mixins/calDistance';
+import { SET_PHARMACY_CHECKED } from '@/types';
 
 export default {
 	mixins: [
@@ -72,8 +73,6 @@ export default {
 	},
 	data() {
 		return {
-			pharmacyInfo: this.pharmacyData.properties || {},
-			pharmacyGeo: this.pharmacyData.geometry || {},
 			pharmacyDetail: {
 				'address': '地址',
 				'phone': '電話',
@@ -82,6 +81,12 @@ export default {
 		};
 	},
 	computed: {
+		pharmacyInfo() {
+			return this.pharmacyData.properties || {};
+		},
+		pharmacyGeo() {
+			return this.pharmacyData.geometry || {};
+		},
 		formattedTel() {
 			return (phone) => {
 				let dist = phone.split(')').shift().substr(2);
@@ -91,8 +96,11 @@ export default {
 		},
 	},
 	methods: {
-		checkOnMap() {
-			this.$store.commit('setCheckedPharmacy', this.pharmacyInfo.id);
+		checkOnMap(id) {
+			this.$store.dispatch(
+				'mapActions',
+				{ type: SET_PHARMACY_CHECKED, payload: id }
+			);
 		},
 	},
 };

@@ -50,6 +50,7 @@ import AvailableCal from '@/components/AvailableCal.vue';
 import DataDetail from '@/components/DataDetail.vue';
 import PharmacyCard from '@/components/PharmacyCard.vue';
 import calDistance from '@/mixins/calDistance';
+import { BACKTO_USER_POS } from '@/types';
 
 export default {
   mixins: [calDistance],
@@ -119,33 +120,25 @@ export default {
       this.dataDetailRange = `「${location}」`;
     },
     backToUserPos() {
-      // this.$emit('backToUserPos');
+      this.$store.dispatch('mapActions', { type: BACKTO_USER_POS });
     },
   },
   watch: {
-    '$store.state.maskData': async function(val) {
-      if (!val) {
-        return;
+    '$store.state.maskData': async function(val, oldVal) {
+      if (!oldVal && val) {
+        this.allPharmacyData = await this.sortPharmaciesByDist(val);
       }
-      this.allPharmacyData = await this.sortPharmaciesByDist(val);
     },
-    '$store.state.mapMounted': function(val, oldVal) {
+    '$store.state.mapRendered': function(val, oldVal) {
       if (!oldVal && val) {
         this.disabled = false;
         this.initPharmaciesToShow();
       }
     },
-    // '$store.state.refreshList': async function({ click }) {
-      // if (!click) {
-      //   return;
-      // }
-
-      // await this.initPharmaciesToShow();
-
-      // if (this.searchCondition) {
-      //   this.chooseLocation(this.searchCondition);
-      // }
-    // },
+    '$store.state.refreshListTime': async function() {
+      this.allPharmacyData = await this.sortPharmaciesByDist(this.$store.state.maskData);
+      this.initPharmaciesToShow();
+    },
   },
   created() {
     this.dataDetailRange = `距離附近 ${this.range}公里 以內`;

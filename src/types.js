@@ -1,4 +1,8 @@
 export const FETCH_MASK_DATA = 'FETCH_MASK_DATA';
-export const SET_CUR_PAGE = 'SET_CUR_PAGE';
 export const GET_WINDOW_WIDTH = 'GET_WINDOW_WIDTH';
 export const REFRESH_LIST = 'REFRESH_LIST';
+export const SET_USER_POS = 'SET_USER_POS';
+export const SET_MAP_RENDERED = 'SET_MAP_RENDERED';
+export const SET_PHARMACY_CHECKED = 'SET_PHARMACY_CHECKED';
+export const SET_MAP_CENTER = 'SET_MAP_CENTER';
+export const BACKTO_USER_POS = 'BACKTO_USER_POS';

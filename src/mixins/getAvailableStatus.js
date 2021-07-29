@@ -24,13 +24,21 @@ export default {
 				'下午': 'afternoon',
 				'晚上': 'night',
 			},
-			targetTime: null,
+			time: null,
         };
     },
     computed: {
+		targetTime: {
+			get() {
+				return this.time;
+			},
+			set(time) {
+				this.time = time;
+			},
+		},
         availableStatus() {
             return (pharmacyInfo) => {
-				let targetTime = this.targetTime || Date.now();
+				const targetTime = this.targetTime || Date.now();
 				this.targetTime = null;
 
                 if (Object.keys(pharmacyInfo).length < 1 || !this.getTimePeriod(targetTime)) {
@@ -38,11 +46,11 @@ export default {
                 }
     
                 const hour = `${new Date(targetTime).getHours()}`;
-                let seamTimes = {
+                const seamTimes = {
                     11: ['morning', 'afternoon'],
                     17: ['afternoon', 'night'],
                 };
-				let statusMap = this.analyzeDataStatus(
+				const statusMap = this.analyzeDataStatus(
 					new Date(targetTime).getDay(),
 					pharmacyInfo
 				);
@@ -103,15 +111,7 @@ export default {
 			}
 		},
 	},
-	watch: {
-		'$store.state.refreshList': function({ click, time }) {
-			if (this.targetTime === time) {
-				return;
-			}
-
-			if (click) {
-				this.targetTime = time;
-			}
-		},
+	created() {
+		this.targetTime = this.$store.state.refreshListTime;
 	},
 };

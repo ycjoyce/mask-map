@@ -29,9 +29,9 @@
 		<navigator
 			v-show="$store.getters.rwd !== 'mobile' || navOpened"
 			:nav-targets="pages"
-			:cur-page="$store.state.curPage"
-			@changeCurPage="changeCurPage"
-			@closeNav="navOpened = false"
+			:cur-page="curPage"
+			@onPageChange="onPageChange"
+			@onClosed="navOpened = false"
 		/>
 	</header>
 </template>
@@ -39,11 +39,16 @@
 <script>
 import Navigator from '@/components/Navigator.vue';
 import { pages } from '@/util';
-import { SET_CUR_PAGE } from '@/types';
 
 export default {
 	components: {
 		Navigator,
+	},
+	props: {
+		curPage: {
+			required: true,
+			type: String,
+		},
 	},
 	data() {
 		return {
@@ -58,11 +63,8 @@ export default {
 		},
 	},
 	methods: {
-		changeCurPage(page) {
-			this.$store.dispatch(
-				'pageActions',
-				{ type: SET_CUR_PAGE, payload: page }
-			);
+		onPageChange(page) {
+			this.$emit('onPageChange', page);
 		},
 	},
 };

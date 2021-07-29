@@ -3,25 +3,29 @@ import Vuex from 'vuex';
 import mask from '@/apis/mask';
 import {
 	FETCH_MASK_DATA,
-	SET_CUR_PAGE,
 	GET_WINDOW_WIDTH,
 	REFRESH_LIST,
+	SET_USER_POS,
+	SET_MAP_RENDERED,
+	SET_PHARMACY_CHECKED,
+	SET_MAP_CENTER,
+	BACKTO_USER_POS,
 } from '@/types';
-import { pages } from '@/util';
 
 Vue.use(Vuex);
 
+// const defaultPos = [25.0457377, 121.5129428];
+
 const store = new Vuex.Store({
 	state: {
-		mapCenter: [25.0457377, 121.5129428],
-		checkedPharmacy: null,
-		mapMounted: false,
 		windowWidth: null,
-		//-----
 		maskData: null,
-		refreshList: { click: null, time: null },
+		refreshListTime: null,
 		curPage: 'index',
-		userCurPos: [25.0457377, 121.5129428], // temp
+		userPos: [], // temp
+		mapRendered: false,
+		checkedPharmacy: null,
+		mapCenter: [],
 	},
 	getters: {
 		rwd(state) {
@@ -35,33 +39,26 @@ const store = new Vuex.Store({
 		},
 	},
 	mutations: {
-		setMapCenter(state, coords) {
-			state.mapCenter = coords;
-		},
-		setUserCurPos(state, coords) {
-			state.userCurPos = coords;
-		},
-		setCheckedPharmacy(state, id) {
-			state.checkedPharmacy = id;
-		},
-		setMapMounted(state) {
-			state.mapMounted = true;
-		},
-		//------
 		getWindowWidth(state, width) {
 			state.windowWidth = width;
 		},
 		fetchMaskData(state, data) {
 			state.maskData = data;
 		},
-		setCurPage(state, page) {
-			if (!Object.keys(pages).includes(page)) {
-				throw new Error('Unvalid page');
-			}
-			state.curPage = page;
+		refreshList(state, time) {
+			state.refreshListTime = time;
 		},
-		refreshList(state, data) {
-			state.refreshList = { ...state.refreshList, ...data };
+		setUserPos(state, coords) {
+			state.userPos = coords;
+		},
+		setMapRendered(state, time) {
+			state.mapRendered = time;
+		},
+		setPharmacyChecked(state, id) {
+			state.checkedPharmacy = id;
+		},
+		setMapCenter(state, coords) {
+			state.mapCenter = coords;
 		},
 	},
 	actions: {
@@ -76,7 +73,7 @@ const store = new Vuex.Store({
 					fetchMaskData();
 					break;
 				case REFRESH_LIST:
-					commit('refreshList', { click: true, ...action.payload });
+					commit('refreshList', action.payload);
 					break;
 				default:
 					break;
@@ -87,8 +84,26 @@ const store = new Vuex.Store({
 				case GET_WINDOW_WIDTH:
 					commit('getWindowWidth', action.payload);
 					break;
-				case SET_CUR_PAGE:
-					commit('setCurPage', action.payload);
+				default:
+					break;
+			}
+		},
+		mapActions({ commit, state }, action) {
+			switch (action.type) {
+				case SET_USER_POS:
+					commit('setUserPos', action.payload);
+					break;
+				case SET_MAP_RENDERED:
+					commit('setMapRendered', action.payload);
+					break;
+				case SET_PHARMACY_CHECKED:
+					commit('setPharmacyChecked', action.payload);
+					break;
+				case SET_MAP_CENTER:
+					commit('setMapCenter', action.payload);
+					break;
+				case BACKTO_USER_POS:
+					commit('setMapCenter', state.userPos);
 					break;
 				default:
 					break;

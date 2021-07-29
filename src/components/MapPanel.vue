@@ -2,17 +2,16 @@
   <main class="map-panel">
 		<modal
 			v-show="modalMsg"
-			@closeModal="toggleModal"
 			:able-to-close="ableToClose"
+			@closeModal="toggleModal"
 		>
 			{{modalMsg}}
 		</modal>
 
     <my-map 
-			@getMapMsg="toggleModal"
-			:all-pharmacy-data="allPharmacyData"
-			:re-render="reRender"
-			:back-to-user-pos="backToUserPos"
+			:all-pharmacy-data="$store.state.maskData"
+			:default-pos="defaultPos"
+			@setMapMsg="toggleModal"
 		/>
 
 		<my-footer/>
@@ -30,32 +29,26 @@ export default {
 		MyMap,
 		MyFooter,
 	},
-	props: {
-		allPharmacyData: {
-      type: Array,
-      required: false,
-		},
-		reRender: {
-			type: Boolean,
-			required: true,
-		},
-		backToUserPos: {
-			type: Number,
-			required: false,
-		},
-	},
 	data() {
 		return {
 			modalMsg: false,
 			ableToClose: true,
+			defaultPos: {
+				name: '台北車站',
+				coords: [25.0457377, 121.5129428],
+			},
 		};
 	},
 	methods: {
-		toggleModal({msg, ableToClose}) {
+		toggleModal({ msg, ableToClose }) {
 			this.modalMsg = msg;
-
-			if (!ableToClose) {
-				this.ableToClose = false;
+			this.ableToClose = ableToClose;
+		},
+	},
+	watch: {
+		'$store.state.mapRendered': function(val) {
+			if (val) {
+				this.toggleModal(false);
 			}
 		},
 	},

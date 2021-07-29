@@ -33,9 +33,9 @@ export default {
 	methods: {
 		changeCurPage(page) {
 			if (this.$store.getters.rwd === 'mobile') {
-				this.$emit('closeNav');
+				this.$emit('onClosed');
 			}
-			this.$emit('changeCurPage', page);
+			this.$emit('onPageChange', page);
 		},
 	},
 };

@@ -9,7 +9,7 @@
 			</li>
 
 			<li class="list-item">
-				資料更新時間 {{formattedTime($store.state.refreshList.time)}}
+				資料更新時間 {{formattedTime($store.state.refreshListTime)}}
 			</li>
 		</ul>
 
@@ -41,10 +41,7 @@ export default {
 		refreshList() {
 			this.$store.dispatch(
 				'maskActions',
-				{
-					type: REFRESH_LIST,
-					payload: { time: Date.now() }
-				}
+				{ type: REFRESH_LIST, payload: Date.now() }
 			);
 		},
 	},
