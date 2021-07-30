@@ -1,5 +1,8 @@
 <template>
-  <aside class="data-panel">
+  <aside
+    class="data-panel"
+    :style="{ overflow: ruleModal ? 'hidden' : 'scroll' }"
+  >
     <modal
       v-show="ruleModal"
       @closeModal="ruleModal = false"
@@ -69,10 +72,7 @@ export default {
       pharmacyShowedAmt: 20,
       dataDetailRange: '',
       range: 5,
-      townMap: null,
-      filteredByInput: [],
       disabled: true,
-      searchCondition: null,
     };
   },
   computed: {
@@ -124,8 +124,8 @@ export default {
     },
   },
   watch: {
-    '$store.state.mapRendered': async function(val, oldVal) {
-      if (!oldVal && val) {
+    '$store.state.userPos': async function(val, oldVal) {
+      if (!oldVal.length) {
         this.allPharmacyData = await this.sortPharmaciesByDist(this.$store.state.maskData);
         this.initPharmaciesToShow();
         this.disabled = false;

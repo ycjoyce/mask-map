@@ -8,7 +8,6 @@ import { getDistance } from '@/util';
 import getAvailableStatus from '@/mixins/getAvailableStatus';
 import calDistance from '@/mixins/calDistance';
 import {
-  SET_USER_POS,
   SET_MAP_RENDERED,
   SET_MAP_CENTER,
   SET_PHARMACY_CHECKED
@@ -23,10 +22,6 @@ export default {
 		allPharmacyData: {
       type: Array,
       required: false,
-    },
-    defaultPos: {
-      type: Object,
-      required: true,
     },
 	},
   data() {
@@ -53,33 +48,10 @@ export default {
     toggleModal(msg, ableToClose = false) {
       this.$emit('setMapMsg', { msg, ableToClose });
     },
-    getUserPos() {
-      const successGPS = (position) => {
-        const { coords: { latitude, longitude } } = position;
-        this.setUserPos([latitude, longitude]);
-        this.initMap();
-      };
+    initMap(center) {
+      this.map = L.map('map', { center, zoom: 15 });
+			this.$store.dispatch('mapActions', { type: SET_MAP_CENTER, payload: center });
 
-      const errorGPS = () => {
-        const { name, coords } = this.defaultPos;
-        this.toggleModal(`無法判斷您的所在位置，預設地點將為 ${name}`);
-        this.setUserPos(coords);
-        this.initMap();
-      };
-
-      if (!navigator.geolocation) {
-        this.toggleModal('您的裝置不具備GPS，無法使用此功能');
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(successGPS, errorGPS);
-    },
-    setUserPos(coords) {
-      this.$store.dispatch('mapActions', { type: SET_MAP_CENTER, payload: coords });
-      this.$store.dispatch('mapActions', { type: SET_USER_POS, payload: coords });
-    },
-    initMap() {
-      this.map = L.map('map', { center: this.center, zoom: 15 });
       L.tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       ).addTo(this.map);
@@ -229,11 +201,6 @@ export default {
     },
   },
   watch: {
-    allPharmacyData(val, oldVal) {
-      if (!oldVal && val) {
-        this.getUserPos();
-      }
-    },
     '$store.state.checkedPharmacy': function(id) {
       if (!id) {
         return;
@@ -252,7 +219,18 @@ export default {
       if (!oldTime && time) {
         return;
       } 
+      setTimeout(() => this.map.invalidateSize(), 0);
+    },
+    '$store.state.windowWidth': function(val, oldVal) {
+      if (!oldVal && val) {
+        return;
+      } 
       this.map.invalidateSize();
+    },
+    '$store.state.userPos': function(val, oldVal) {
+      if (!oldVal.length) {
+        this.initMap(val);
+      }
     },
   },
   created() {

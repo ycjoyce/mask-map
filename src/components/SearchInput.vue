@@ -26,10 +26,6 @@ export default {
 			type: Boolean,
 			default: () => false,
 		},
-		clear: {
-			required: false,
-			type: Boolean,
-		},
 	},
 	methods: {
 		onSearchInput(e) {

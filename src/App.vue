@@ -35,9 +35,6 @@
 
 		<div
 			class="main-container"
-			:style="{
-				height: `calc(100vh - ${headerHeight}px)`
-			}"
 		>
 			<data-panel
 				v-show="$store.getters.rwd !== 'mobile' || panelShowed === 'data'"
@@ -61,7 +58,13 @@ import {
 	GET_WINDOW_WIDTH,
 	REFRESH_LIST,
 	SET_MAP_RENDERED,
+	SET_USER_POS,
 } from '@/types';
+
+const defaultPos = {
+	name: '台北車站',
+	coords: [25.0457377, 121.5129428],
+};
 
 export default {
 	name: 'App',
@@ -73,7 +76,6 @@ export default {
 	},
 	data() {
 		return {
-			headerHeight: 0,
 			showMaskRuleModal: false,
 			panelShowed: 'data',
 			curPage: 'index',
@@ -81,7 +83,6 @@ export default {
 	},
 	methods: {
 		getElData() {
-			this.headerHeight = this.$refs['my-header']['$el'].offsetHeight;
 			this.$store.dispatch(
 				'pageActions',
 				{ type: GET_WINDOW_WIDTH, payload: window.innerWidth }
@@ -116,6 +117,28 @@ export default {
 					break;
 			}
 		},
+		getUserPos() {
+			const successGPS = (position) => {
+				const { coords: { latitude, longitude } } = position;
+				this.setUserPos([latitude, longitude]);
+			};
+
+			const errorGPS = () => {
+				const { name, coords } = defaultPos;
+				this.toggleModal(`無法判斷您的所在位置，預設地點將為 ${name}`);
+				this.setUserPos(coords);
+			};
+
+			if (!navigator.geolocation) {
+				this.toggleModal('您的裝置不具備GPS，無法使用此功能');
+				return;
+			}
+
+			navigator.geolocation.getCurrentPosition(successGPS, errorGPS);
+		},
+		setUserPos(coords) {
+			this.$store.dispatch('mapActions', { type: SET_USER_POS, payload: coords });
+		},
 	},
 	watch: {
 		'$store.state.refreshListTime': function() {
@@ -130,18 +153,22 @@ export default {
 			if (this.$store.getters.rwd !== 'mobile') {
 				return;
 			}
-			this.panelShowed = 'map';
-			if (!val) {
-				return;
+
+			if (val) {
+				this.$store.dispatch('mapActions', {
+					type: SET_MAP_RENDERED,
+					payload: Date.now(),
+				});
+				this.panelShowed = 'map';
 			}
-			this.$store.dispatch('mapActions', {
-				type: SET_MAP_RENDERED,
-				payload: Date.now(),
-			});
+		},
+		'$store.state.maskData': function(val, oldVal) {
+			if (!oldVal && val) {
+				this.getUserPos();
+			}
 		},
 	},
 	created() {
-		this.fetchMaskData();
 		this.$store.dispatch(
 			'maskActions',
 			{ type: REFRESH_LIST, payload: Date.now() }

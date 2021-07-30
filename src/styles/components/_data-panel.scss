@@ -2,7 +2,6 @@
     background-color: map-get($theme-color, bgc);
     padding: 20px 30px;
     height: 100%;
-    overflow-y: scroll;
     position: relative;
 
     >*:not(:last-child) {

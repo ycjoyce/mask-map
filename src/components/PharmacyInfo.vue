@@ -39,6 +39,7 @@
 					class="btn text-sm text-underline text-color-basic list-item-btn"
 					v-if="detailKey === 'address'"
 					@click="checkOnMap(pharmacyInfo.id)"
+					:disabled="!$store.state.mapRendered"
 				>
 					於地圖查看
 				</button>

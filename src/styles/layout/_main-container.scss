@@ -1,5 +1,10 @@
 .main-container {
     display: flex;
+    height: calc(100vh - #{map-get($header-height, basic)});
+
+    @include rwd(mobile) {
+        height: calc(100vh - #{map-get($header-height, mobile)});
+    }
 }
 
 .data-panel {

@@ -10,7 +10,6 @@
 
     <my-map 
 			:all-pharmacy-data="$store.state.maskData"
-			:default-pos="defaultPos"
 			@setMapMsg="toggleModal"
 		/>
 
@@ -33,10 +32,6 @@ export default {
 		return {
 			modalMsg: false,
 			ableToClose: true,
-			defaultPos: {
-				name: '台北車站',
-				coords: [25.0457377, 121.5129428],
-			},
 		};
 	},
 	methods: {

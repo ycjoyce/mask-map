@@ -24,17 +24,11 @@ export default {
 				'下午': 'afternoon',
 				'晚上': 'night',
 			},
-			time: null,
         };
     },
     computed: {
-		targetTime: {
-			get() {
-				return this.time;
-			},
-			set(time) {
-				this.time = time;
-			},
+		targetTime() {
+			return this.$store.state.refreshListTime;
 		},
         availableStatus() {
             return (pharmacyInfo) => {
@@ -46,21 +40,18 @@ export default {
 						available: '星期一上午看診、星期二上午看診、星期三上午看診、星期四上午看診、星期五上午看診、星期六上午看診、星期日上午看診、星期一下午休診、星期二下午休診、星期三下午休診、星期四下午休診、星期五下午休診、星期六下午休診、星期日下午休診、星期一晚上休診、星期二晚上休診、星期三晚上休診、星期四晚上休診、星期五晚上休診、星期六晚上休診、星期日晚上休診',
 					};
 				}
-				
-				const targetTime = this.targetTime || Date.now();
-				this.targetTime = null;
 
-                if (Object.keys(pharmacyInfoCopied).length < 1 || !this.getTimePeriod(targetTime)) {
+                if (Object.keys(pharmacyInfoCopied).length < 1 || !this.getTimePeriod(this.targetTime)) {
                     return 'unavailable';
                 }
     
-                const hour = `${new Date(targetTime).getHours()}`;
+                const hour = `${new Date(this.targetTime).getHours()}`;
                 const seamTimes = {
                     11: ['morning', 'afternoon'],
                     17: ['afternoon', 'night'],
                 };
 				const statusMap = this.analyzeDataStatus(
-					new Date(targetTime).getDay(),
+					new Date(this.targetTime).getDay(),
 					pharmacyInfoCopied
 				);
 
@@ -75,7 +66,7 @@ export default {
                     }
                 }
 
-                return statusMap[this.getTimePeriod(targetTime)];
+                return statusMap[this.getTimePeriod(this.targetTime)];
             }
 		},
 		analyzeDataStatus() {
@@ -119,8 +110,5 @@ export default {
 				return 'danger';
 			}
 		},
-	},
-	created() {
-		this.targetTime = this.$store.state.refreshListTime;
 	},
 };

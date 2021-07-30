@@ -14,15 +14,12 @@ import {
 
 Vue.use(Vuex);
 
-// const defaultPos = [25.0457377, 121.5129428];
-
 const store = new Vuex.Store({
 	state: {
 		windowWidth: null,
 		maskData: null,
 		refreshListTime: null,
-		curPage: 'index',
-		userPos: [], // temp
+		userPos: [],
 		mapRendered: false,
 		checkedPharmacy: null,
 		mapCenter: [],
@@ -63,9 +60,16 @@ const store = new Vuex.Store({
 	},
 	actions: {
 		maskActions({ commit }, action) {
-			const fetchMaskData = async () => {
-				const { data: { features } } = await mask.get();
-				commit('fetchMaskData', features);
+			const fetchMaskData = () => {
+				let features = null;
+				mask.get().then((res) => {
+					features = res.data.features;
+				}).catch(async () => {
+					const { features: res } = await import('@/assets/points.json');
+					features = res;
+				}).finally(() => {
+					commit('fetchMaskData', features);
+				});
 			};
 
 			switch (action.type) {

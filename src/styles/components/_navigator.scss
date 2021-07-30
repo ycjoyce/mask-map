@@ -36,5 +36,8 @@
     @include rwd(mobile) {
         width: 100%;
         background-color: map-get($theme-color, pmr);
+        position: absolute;
+        z-index: 999;
+        top: map-get($header-height, mobile);
     }
 }
