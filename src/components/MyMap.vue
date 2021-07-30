@@ -83,7 +83,7 @@ export default {
       L.tileLayer(
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       ).addTo(this.map);
-      this.map.on('moveend', this.onMapMove);
+      this.map.on('moveend', this.onMapMoveEnd);
 
       this.drawMarkers(this.filterPointsByDist());
       
@@ -92,19 +92,20 @@ export default {
         { type: SET_MAP_RENDERED, payload: Date.now() }
       );
     },
-    async onMapMove() {
+    async onMapMoveEnd() {
       const { lat, lng } = this.map.getCenter();
       const [storeLat, storeLng] = this.$store.state.mapCenter;
+      const checkedPharmacyId = this.$store.state.checkedPharmacy;
+
       if (lat === storeLat && lng === storeLng) {
         return;
       }
 
       this.$store.dispatch('mapActions', { type: SET_MAP_CENTER, payload: [lat, lng] });
-      const markers = await this.drawMarkers(this.filterPointsByDist());
-      const checkedPharmacyId = this.$store.state.checkedPharmacy;
+      await this.drawMarkers(this.filterPointsByDist());
 
       if (checkedPharmacyId) {
-        const targetMarker = markers.find(({ _pharmacyId }) => (
+        const targetMarker = this.markers.find(({ _pharmacyId }) => (
           _pharmacyId === checkedPharmacyId
         ));
         targetMarker.openPopup();
@@ -117,14 +118,14 @@ export default {
       ));
     },
     drawMarkers(points) {
+      const markerPoints = points.filter(({ properties: { id } }) => {
+        return !this.markers.find((marker) => marker._pharmacyId === id);
+      });
       return new Promise((resolve) => {
-        const renderMarkers = points.map((point) => this.renderMarker(point));
+        const renderMarkers = markerPoints.map((point) => this.renderMarker(point));
         Promise.allSettled(renderMarkers).then((res) => {
           res.forEach(({ status, value: marker }, idx, arr) => {
-            if (
-              status === 'fulfilled' &&
-              !this.markers.find((m) => m._pharmacyId === marker._pharmacyId)
-            ) {
+            if (status === 'fulfilled') {
               this.markers = [...this.markers, marker];
             }
             if (idx === arr.length - 1) {
@@ -176,10 +177,6 @@ export default {
       }).addTo(this.map).bindPopup(popup);
       marker._name = point.properties.name;
       marker._pharmacyId = point.properties.id;
-      marker.on('click', (e) => {
-        const { lat, lng } = e.latlng;
-        this.map.flyTo([lat, lng]);
-      });
 
       return marker;
     },
@@ -259,7 +256,7 @@ export default {
     },
   },
   created() {
-    this.toggleModal('地圖資料讀取中請稍候');
+    this.toggleModal('地圖資料讀取中請稍候');  
   },
 };
 </script>

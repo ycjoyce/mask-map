@@ -124,15 +124,11 @@ export default {
     },
   },
   watch: {
-    '$store.state.maskData': async function(val, oldVal) {
+    '$store.state.mapRendered': async function(val, oldVal) {
       if (!oldVal && val) {
-        this.allPharmacyData = await this.sortPharmaciesByDist(val);
-      }
-    },
-    '$store.state.mapRendered': function(val, oldVal) {
-      if (!oldVal && val) {
-        this.disabled = false;
+        this.allPharmacyData = await this.sortPharmaciesByDist(this.$store.state.maskData);
         this.initPharmaciesToShow();
+        this.disabled = false;
       }
     },
     '$store.state.refreshListTime': async function() {

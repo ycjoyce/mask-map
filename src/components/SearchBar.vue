@@ -77,6 +77,7 @@ export default {
 			if (val === this.searchInput) {
 				return;
 			}
+			this.focusedItemIdx = null;
 			clearTimeout(this.timerID);
 			this.searchInput = val;
 		},
