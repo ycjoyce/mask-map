@@ -1,5 +1,5 @@
 # 口罩即時查 口罩地圖網站
-基於 Vue.js 建立的口罩地圖網站，以 Vuex 管理狀態，地圖採用 Leaflet.js。UI 皆以 SCSS 遵循 OOCSS 手刻而成，並支援 RWD。
+基於 Vue.js 建立的口罩地圖網站，以 Vuex 管理狀態，地圖採用 Leaflet.js。UI 以 SCSS 手刻而成，並支援 RWD。
 
 ## 線上演示
 [Demo](https://ycjoyce.github.io/mask-map/)
