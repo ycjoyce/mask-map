@@ -41,6 +41,7 @@
     <button
       v-show="$store.getters.rwd !== 'mobile'"
       class="btn btn-solid-white corner-circle box-sdw locate-cur-pos"
+      :disabled="disabled"
       @click="backToUserPos"
     ></button>
   </aside>
