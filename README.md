@@ -38,7 +38,7 @@
 
 ## 使用技術
 
-- Vue.js / Vue Cli / Vuex
+- Vue.js / Vuex
 - Javascript (ES6+)
 - Leaflet.js
 - SCSS
