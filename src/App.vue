@@ -41,6 +41,7 @@
 			/>
 
 			<map-panel
+				:err-msg="errMsg"
 				v-show="$store.getters.rwd !== 'mobile' || panelShowed === 'map'"
 			/>
 		</div>
@@ -79,6 +80,7 @@ export default {
 			showMaskRuleModal: false,
 			panelShowed: 'data',
 			curPage: 'index',
+			errMsg: '',
 		};
 	},
 	methods: {
@@ -125,12 +127,12 @@ export default {
 
 			const errorGPS = () => {
 				const { name, coords } = defaultPos;
-				this.toggleModal(`無法判斷您的所在位置，預設地點將為 ${name}`);
+				this.errMsg = `無法判斷您的所在位置，預設地點將為 ${name}`
 				this.setUserPos(coords);
 			};
 
 			if (!navigator.geolocation) {
-				this.toggleModal('您的裝置不具備GPS，無法使用此功能');
+				this.errMsg = '您的裝置不具備GPS，無法使用此功能';
 				return;
 			}
 

@@ -3,7 +3,7 @@
 		<modal
 			v-show="modalMsg"
 			:able-to-close="ableToClose"
-			@closeModal="toggleModal"
+			@closeModal="modalMsg = false"
 		>
 			{{modalMsg}}
 		</modal>
@@ -34,6 +34,12 @@ export default {
 			ableToClose: true,
 		};
 	},
+	props: {
+		errMsg: {
+			type: String,
+			required: true,
+		},
+	},
 	methods: {
 		toggleModal({ msg, ableToClose }) {
 			this.modalMsg = msg;
@@ -43,7 +49,12 @@ export default {
 	watch: {
 		'$store.state.mapRendered': function(val) {
 			if (val) {
-				this.toggleModal(false);
+				setTimeout(() => this.modalMsg = false, 1500);
+			}
+		},
+		errMsg(val) {
+			if (val) {
+				this.toggleModal({ msg: val, ableToClose: false });
 			}
 		},
 	},
