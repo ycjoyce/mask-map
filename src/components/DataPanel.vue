@@ -74,6 +74,7 @@ export default {
       dataDetailRange: '',
       range: 5,
       disabled: true,
+      location: '',
     };
   },
   computed: {
@@ -119,6 +120,7 @@ export default {
     onSearchSubmit(location) {
       this.filterPharmaciesBySearch(location);
       this.dataDetailRange = `「${location}」`;
+      this.location = location;
     },
     backToUserPos() {
       this.$store.dispatch('mapActions', { type: BACKTO_USER_POS });
@@ -135,6 +137,9 @@ export default {
     '$store.state.refreshListTime': async function() {
       this.allPharmacyData = await this.sortPharmaciesByDist(this.$store.state.maskData);
       this.initPharmaciesToShow();
+      if (this.location) {
+        this.filterPharmaciesBySearch(this.location);
+      }
     },
   },
   created() {
