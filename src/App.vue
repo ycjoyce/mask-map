@@ -82,6 +82,10 @@ export default {
 		};
 	},
 	methods: {
+		setVh() {
+			const vh = window.innerHeight * 0.01;
+			document.documentElement.style.setProperty("--vh", `${vh}px`);
+		},
 		getElData() {
 			this.$store.dispatch(
 				'pageActions',
@@ -176,6 +180,7 @@ export default {
 	},
 	mounted() {
 		this.getElData();
+		this.setVh();
 		window.addEventListener('resize', this.getElData);
 	},
 	beforeDestroy() {

@@ -1,9 +1,11 @@
 .main-container {
     display: flex;
     height: calc(100vh - #{map-get($header-height, basic)});
+    height: calc(#{var(--vh)} * 100 - #{map-get($header-height, basic)});
 
     @include rwd(mobile) {
         height: calc(100vh - #{map-get($header-height, mobile)});
+        height: calc(#{var(--vh)} * 100 - #{map-get($header-height, mobile)});
     }
 }
 

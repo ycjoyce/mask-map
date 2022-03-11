@@ -8,6 +8,7 @@
     border-color: map-get($theme-color, unavailable);
     z-index: 20;
     max-height: 50vh;
+    max-height: calc(#{var(--vh)} * 50);
     overflow-y: scroll;
 }
 
